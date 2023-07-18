@@ -88,7 +88,7 @@ public class VM8 implements Closeable, VMInterface {
 	}
 
 	@Override
-	public Object newArray(Object... args) {
+	public AbstractList<Object> newArray(Object... args) {
 		@SuppressWarnings("unchecked")
 		AbstractList<Object> result = (AbstractList<Object>) this.__js__("[]");
 		for (int i = 0; i < args.length; i++) {
@@ -98,7 +98,7 @@ public class VM8 implements Closeable, VMInterface {
 	}
 
 	@Override
-	public Object newObject(Object... args) {
+	public AbstractMap<String, Object> newObject(Object... args) {
 		@SuppressWarnings("unchecked")
 		AbstractMap<String, Object> result = (AbstractMap<String, Object>) this.__js__("({})");
 		for (int i = 0; i < args.length; i += 2) {
@@ -136,7 +136,6 @@ public class VM8 implements Closeable, VMInterface {
 		return newDate(sdf.format(x));
 	}
 
-	/*
 	@SuppressWarnings("unchecked")
 	public AbstractList<Object> asArray(Object x) {
 		return (AbstractList<Object>) x;
@@ -146,7 +145,6 @@ public class VM8 implements Closeable, VMInterface {
 	public AbstractMap<String, Object> asObject(Object x) {
 		return (AbstractMap<String, Object>) x;
 	}
-	*/
 
 	@Override
 	public Date asDate(Object x) throws ParseException {
