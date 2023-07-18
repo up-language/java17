@@ -18,18 +18,8 @@ class VM8Test {
 	@Test
 	void test() throws Exception {
 
-		GraalJSScriptEngine engine = GraalJSScriptEngine
-				.create(Engine.newBuilder().option("engine.WarnInterpreterOnly", "false").build(),
-						Context.newBuilder("js")
-								// .allowIO(false)
-								.option(JSContextOptions.ECMASCRIPT_VERSION_NAME, "2022"));
-		Object x778 = engine.eval("777+1");
-		System.out.println(x778);
-		engine.eval("console.log(777+1)");
-		engine.put("graal", 1221);
-		engine.eval("console.log(graal)");
-
 		VM8 vm = new VM8();
+		//VM vm = new VM();
 
 		Object tmp = null;
 		vm.js("console.log('hello-world-0');");
@@ -73,16 +63,8 @@ class VM8Test {
 		Object dt = vm.load(":/date.js");
 		vm.print(dt.getClass().getName(), "dt.getClass().getName()");
 		System.out.println(dt.toString());
-		//var keys = vm.asObject(dt).keySet().toArray();
-		// for (int i = 0; i < keys.length; i++) {
-		// System.out.println("[" + keys[i] + "]");
-		// }
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-		Date date = df.parse(dt.toString());
-		System.out.println(date);
 
 		vm.js("console.log(JSON.stringify(new Date()))");
-		vm.load(":/class.js");
 		// com.oracle.truffle.polyglot.PolyglotMap
 		vm.print(vm.newDate(), "vm.newDate()");
 		vm.print(vm.newDate("2023-07-17T17:13:12.577Z"), "vm.newDate(\"2023-07-17T17:13:12.577Z\")");
@@ -101,15 +83,6 @@ class VM8Test {
 				console.log($xyz);
 				""");
 
-		vm.js("dt = new Date()");
-		vm.asDate(vm.js("dt"));
-
-		var dtAry = vm.newArray(vm.newDate());
-		var dtAryJson = vm.toJson(dtAry);
-		System.out.println(dtAryJson);
-		vm.print(((JSONArray) dtAryJson).toString(2), "((JSONArray)dtAryJson).toString(2)");
-		var dtAryNative = vm.toNative(dtAryJson);
-		vm.print(dtAryNative);
 
 		vm.print(vm.toJson(vm.js("undefined")));
 
@@ -151,14 +124,17 @@ class VM8Test {
 		tmp = vm.newObject("x", 1, "y", 2);
 		vm.print(tmp);
 		
-		/*
-		try {
-			vm.print(vm.newDate("xxx"));
-			vm.print("assertion ng");
-		} catch (Exception e) {
-			vm.print("assertion ok");
-		}
-		*/
+		vm.js("dt = new Date()");
+		vm.asDate(vm.js("dt"));
+
+		var dtAry = vm.newArray(vm.newDate());
+		var dtAryJson = vm.toJson(dtAry);
+		System.out.println(dtAryJson);
+		vm.print(((JSONArray) dtAryJson).toString(2), "((JSONArray)dtAryJson).toString(2)");
+		var dtAryNative = vm.toNative(dtAryJson);
+		vm.print(dtAryNative);
+
+		vm.load(":/class.js");
 
 		vm.close();
 	}

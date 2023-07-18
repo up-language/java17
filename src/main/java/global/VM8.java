@@ -148,6 +148,7 @@ public class VM8 implements Closeable, VMInterface {
 	}
 	*/
 
+	@Override
 	public Date asDate(Object x) throws ParseException {
 		verify("$0 instanceof Date", x);
 		verify("(typeof $0) === 'object'", x);
@@ -175,10 +176,12 @@ public class VM8 implements Closeable, VMInterface {
 		}
 	}
 
+	@Override
 	public Object js(String script, Object... args) throws ScriptException {
 		return run(script, args);
 	}
 
+	@Override
 	public Object __js__(String script, Object... args) {
 		try {
 			return run(script, args);
@@ -188,10 +191,12 @@ public class VM8 implements Closeable, VMInterface {
 		}
 	}
 
+	@Override
 	public Object jsToJson(String script, Object... args) throws ScriptException {
 		return toJson(run(script, args));
 	}
 
+	@Override
 	public Object toJson(Object x) {
 		if (x == null)
 			return null;
@@ -231,6 +236,7 @@ public class VM8 implements Closeable, VMInterface {
 		}
 	}
 
+	@Override
 	public Object toNative(Object x) {
 		if (x == null)
 			return null;
@@ -264,6 +270,7 @@ public class VM8 implements Closeable, VMInterface {
 		}
 	}
 
+	@Override
 	public void print(Object x, String title) {
 		if (title != null) {
 			System.out.print(title);
@@ -278,14 +285,17 @@ public class VM8 implements Closeable, VMInterface {
 		}
 	}
 
+	@Override
 	public void print(Object x) {
 		print(x, null);
 	}
 
+	@Override
 	public Object load(String path) throws Exception {
 		return js(readAsText(path));
 	}
 
+	@Override
 	public String readAsText(String path) throws Exception {
 		if (path.startsWith(":/")) {
 			return ResourceUtil.GetString(path.substring(2));
@@ -298,22 +308,27 @@ public class VM8 implements Closeable, VMInterface {
 		}
 	}
 
+	@Override
 	public Object readAsJson(String path) throws ScriptException, Exception {
 		return parse(readAsText(path));
 	}
 
+	@Override
 	public String stringify(Object x, int indent) {
 		return (String) __js__("JSON.stringify($0, null, $1)", x, indent);
 	}
 
+	@Override
 	public String stringify(Object x) {
 		return (String) __js__("JSON.stringify($0)", x);
 	}
 
+	@Override
 	public Object parse(String json) throws ScriptException {
 		return js("JSON.parse($0)", json);
 	}
 
+	@Override
 	public void verify(String script, Object... args) {
 		Object result = null;
 		try {
@@ -329,10 +344,12 @@ public class VM8 implements Closeable, VMInterface {
 		org.junit.jupiter.api.Assertions.assertTrue((boolean) result);
 	}
 
+	/*
 	class Printer {
 		public void print(Object x) {
 			System.out.println(x);
 		}
 	}
+	*/
 
 }

@@ -8,18 +8,26 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 //import java.nio.charset.StandardCharsets;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.AbstractList;
+import java.util.AbstractMap;
+import java.util.Date;
+
+import javax.script.ScriptException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class VM {
+public class VM implements Closeable, VMInterface {
 	public Context context;
 	public Global global;
 
@@ -29,12 +37,35 @@ public class VM {
 		this.global = new Global(context);
 		// スコープを初期化
 		ImporterTopLevel.init(context, global, true);
-		this.setGlobal("$vm", this);
-		this.js("globalThis.print = function(x, title) { $vm.print(x, title===undefined?null:title); }");
+		this.setGlobal("__vm__", this);
+		this.js("globalThis.print = function(x, title) { __vm__.print(x, title===undefined?null:title); }");
 		this.js("globalThis.console = { log: globalThis.print }");
-		this.js("globalThis.load = function(path) { return $vm.loadFile(path); }");
-		this.js("globalThis.js = function() { var args=['<eval>']; for (var i=0; i<arguments.length; i++) args.push(arguments[i]); return $vm.runArray(args); }");
-		this.js("globalThis.jsWithPath = function() { var args=[]; for (var i=0; i<arguments.length; i++) args.push(arguments[i]); return $vm.runArray(args); }");
+		this.js("globalThis.load = function(path) { return __vm__.loadFile(path); }");
+		this.js("globalThis.js = function() { var args=['<eval>']; for (var i=0; i<arguments.length; i++) args.push(arguments[i]); return __vm__.runArray(args); }");
+		this.js("globalThis.jsWithPath = function() { var args=[]; for (var i=0; i<arguments.length; i++) args.push(arguments[i]); return __vm__.runArray(args); }");
+		this.js("""
+				globalThis.readAsText = function(path) {
+				  return __vm__.readAsText(path);
+				}
+				""");
+		this.js("""
+				globalThis.readAsJson = function(path) {
+				  return __vm__.readAsJson(path);
+				}
+				""");
+		this.js("""
+				globalThis.verify = function(x) {
+				  if (!x) throw Error("Verification failed.");
+				}
+				""");
+		this.js("""
+				globalThis.__typeof__ = function(x) {
+				  if (x === null) return "null";
+				  if (x instanceof Array) return "array";
+				  if (x instanceof Date) return "date";
+				  return (typeof x);
+				}
+				""");
 	}
 
 	public Object setGlobal(String name, Object x) {
@@ -42,7 +73,7 @@ public class VM {
 		return ScriptableObject.getProperty(global, name);
 	}
 
-	private Object run_(String path, String script, Object[] args) {
+	private Object run(String path, String script, Object[] args) {
 		Scriptable scope = context.initStandardObjects(global);
 		for (int i = 0; i < args.length; i++) {
 			ScriptableObject.putProperty(scope, "$" + i, toNative(args[i]));
@@ -51,19 +82,19 @@ public class VM {
 	}
 
 	public Object js(String script, Object... args) {
-		return run_("<eval>", script, args);
+		return run("<eval>", script, args);
 	}
 
 	public Object jsToJson(String script, Object... args) {
-		return toJson(run_("<eval>", script, args));
+		return toJson(run("<eval>", script, args));
 	}
 
 	public Object jsWithPath(String path, String script, Object... args) {
-		return run_(path, script, args);
+		return run(path, script, args);
 	}
 
 	public Object jsToJsonWithPath(String path, String script, Object... args) {
-		return toJson(run_(path, script, args));
+		return toJson(run(path, script, args));
 	}
 
 	public Object runArray(Object x) {
@@ -74,7 +105,7 @@ public class VM {
 		for (int i=2; i<ary.size(); i++) {
 			args[i-2] = ary.get(i);
 		}
-		return run_(path, script, args);
+		return run(path, script, args);
 	}
 
 	public void print(Object x, String title) {
@@ -86,7 +117,9 @@ public class VM {
 		if (x instanceof String) {
 			System.out.println(x);
 		} else {
-			String json = (String) js("JSON.stringify($0, null, 2)", x);
+			Object json = js("JSON.stringify($0, null, 2)", x);
+			if (!(json instanceof String)) json = "null";
+			//String json = (String) js("JSON.stringify($0, null, 2)", x);
 			System.out.println(json);
 		}
 	}
@@ -173,7 +206,116 @@ public class VM {
 	}
 
 	public Object loadFile(String path) throws Exception {
-		return this.run_(path, this.getSourceCode(path), new Object[] {});
+		return this.run(path, this.getSourceCode(path), new Object[] {});
+	}
+
+	@Override
+	public Object newArray(Object... args) {
+		org.mozilla.javascript.NativeArray result = (org.mozilla.javascript.NativeArray) this.__js__("[]");
+		for (int i = 0; i < args.length; i++) {
+			result.add(toNative(args[i]));
+		}
+		return result;
+	}
+
+	@Override
+	public Object newObject(Object... args) {
+		org.mozilla.javascript.NativeObject result = (org.mozilla.javascript.NativeObject) this.__js__("({})");
+		for (int i = 0; i < args.length; i += 2) {
+			result.put((String) args[i], toNative(args[i + 1]));
+		}
+		return result;
+	}
+
+	@Override
+	public String typeof(Object x) {
+		return (String) __js__("__typeof__($0)", x);
+	}
+
+	@Override
+	public boolean typeis(Object x, String type) {
+		return typeof(x).equals(type);
+	}
+
+	@Override
+	public Object newDate() {
+		return __js__("new Date()");
+	}
+
+	@Override
+	public Object newDate(String x) {
+		var result = newDate();
+		var ts = __js__("Date.parse($0)", x);
+		__js__("$0.setTime($1)", result, ts);
+		return result;
+	}
+
+	@Override
+	public Object newDate(Date x) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		return newDate(sdf.format(x));
+	}
+
+	@Override
+	public Date asDate(Object x) throws Exception {
+		//verify("$0 instanceof Date", x);
+		//verify("(typeof $0) === 'object'", x);
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		Date date = df.parse(x.toString());
+		return date;
+	}
+
+	@Override
+	public Object __js__(String script, Object... args) {
+		return run("<eval>", script, args);
+	}
+
+	@Override
+	public String readAsText(String path) throws Exception {
+		if (path.startsWith(":/")) {
+			return ResourceUtil.GetString(path.substring(2));
+		} else if (path.startsWith("http:") || path.startsWith("https:")) {
+			try (InputStream in = new URL(path).openStream()) {
+				return IOUtils.toString(in);
+			}
+		} else {
+			return FileUtils.readFileToString(new File(path));
+		}
+	}
+
+	@Override
+	public Object readAsJson(String path) throws Exception {
+		return parse(readAsText(path));
+	}
+
+	@Override
+	public String stringify(Object x, int indent) {
+		return (String) __js__("JSON.stringify($0, null, $1)", x, indent);
+	}
+
+	@Override
+	public String stringify(Object x) {
+		return (String) __js__("JSON.stringify($0)", x);
+	}
+
+	@Override
+	public Object parse(String json) throws Exception {
+		return js("JSON.parse($0)", json);
+	}
+
+	@Override
+	public void verify(String script, Object... args) {
+		Object result = null;
+		result = run("<eval>", script, args);
+		if (result == null)
+			org.junit.jupiter.api.Assertions.fail();
+		if (!(result instanceof java.lang.Boolean))
+			org.junit.jupiter.api.Assertions.fail();
+		org.junit.jupiter.api.Assertions.assertTrue((boolean) result);
+	}
+
+	@Override
+	public void close() throws IOException {
 	}
 
 }
