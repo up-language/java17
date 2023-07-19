@@ -7,8 +7,8 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = 'com.github.up-language'
-            artifactId = 'up-java-lib'
-            version = '2023.0717.2349'
+            artifactId = 'java17'
+            version = '2023.0719.1532'
             from components.java
         }
     }
