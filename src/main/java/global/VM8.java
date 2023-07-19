@@ -240,6 +240,9 @@ public class VM8 implements Closeable, VMInterface {
 			return null;
 		if (x instanceof java.util.Date)
 			return newDate((java.util.Date) x);
+		if (x instanceof java.math.BigDecimal) {
+			return ((java.math.BigDecimal)x).doubleValue();
+		}
 		String className = x.getClass().getName();
 		switch (className) {
 
