@@ -1,11 +1,14 @@
 package global;
 
+import com.oracle.truffle.regex.tregex.util.json.JsonNull;
 import org.bson.*;
 import org.bson.codecs.BsonDocumentCodec;
 import org.bson.io.BasicOutputBuffer;
 import org.bson.json.JsonWriterSettings;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Date;
 
 public class Data {
     public static byte[] EncodeToBytes(BsonDocument doc) {
@@ -78,22 +81,50 @@ public class Data {
     }
     */
 
-    public static void Print(BsonValue val) {
+    public static void Print(Object val) {
         Print(val, null);
     }
-    public static void Print(BsonValue val, String title) {
+    public static void Print(Object val, String title) {
         if (title != null) System.out.printf("%s: ", title);
-        var doc = new BsonDocument();
-        doc.put("?", val);
-        String json = ToJson(doc, false);
-        JSONObject obj = new JSONObject(json);
-        Object x = obj.get("?");
+        Object x = null;
+        if (val instanceof BsonValue) {
+            var doc = new BsonDocument();
+            doc.put("?", (BsonValue)val);
+            String json = ToJson(doc, false);
+            JSONObject obj = new JSONObject(json);
+            x = obj.get("?");
+        } else {
+            x = val;
+        }
         String result = "";
         if (x == null) result = "null";
+        else if (x instanceof JsonNull) result = "null";
         else if (x instanceof JSONArray) result = ((JSONArray)x).toString(2);
         else if (x instanceof JSONObject) result = ((JSONObject)x).toString(2);
         else result = x.toString();
+        if (val != null)
+            result = "<" + val.getClass().getSimpleName() + "> " + result;
         System.out.println(result);
+    }
+
+    public static BsonValue ToValue(Object x) {
+        if (x == null) return new BsonNull();
+        if (x instanceof Integer) return new BsonInt32((int)x);
+        if (x instanceof Long) return new BsonInt64((long)x);
+        if (x instanceof String) return new BsonString((String)x);
+        if (x instanceof Date) return new BsonDateTime(((Date)x).getTime());
+        if (x instanceof byte[]) return new BsonBinary((byte[])x);
+        return null;
+    }
+
+    public static Object FromValue(BsonValue x) {
+        if (x == null) return null;
+        if (x instanceof BsonInt32) return x.asInt32().intValue();
+        if (x instanceof BsonInt64) return x.asInt64().longValue();
+        if (x instanceof BsonString) return x.asString().getValue();
+        if (x instanceof BsonDateTime) return new Date(x.asDateTime().getValue());
+        if (x instanceof BsonBinary) return x.asBinary().getData();
+        return x;
     }
 
     public static void PutBsonToFileEnd(String filePath, BsonDocument doc) throws Exception {
