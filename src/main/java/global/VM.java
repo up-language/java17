@@ -126,7 +126,7 @@ public class VM implements Closeable, VMInterface {
 	public Object newDate(String x) {
 		var result = newDate();
 		var ts = __js__("Date.parse(_0)", x);
-		__js__("_0.setTime($1)", result, ts);
+		__js__("_0.setTime(_1)", result, ts);
 		return result;
 	}
 
