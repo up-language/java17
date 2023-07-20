@@ -3,6 +3,7 @@ package global;
 import com.oracle.truffle.regex.tregex.util.json.JsonNull;
 import org.bson.*;
 import org.bson.codecs.BsonDocumentCodec;
+import org.bson.conversions.Bson;
 import org.bson.io.BasicOutputBuffer;
 import org.bson.json.JsonWriterSettings;
 import org.json.JSONArray;
@@ -51,12 +52,23 @@ public class Data {
         return x;
     }
 
-    public static String ToJson(BsonDocument doc, boolean indent) {
+    public static String ToJson(BsonValue x, boolean indent) {
+        BsonDocument doc = null;
+        if (x instanceof BsonDocument)
+            doc = (BsonDocument) x;
+        else {
+            doc = new BsonDocument();
+            doc.put("$wrap", x);
+        }
         return doc.toJson(JsonWriterSettings.builder().indent(indent).build());
     }
 
-    public static BsonDocument FromJson(String json) {
-        return BsonDocument.parse(json);
+    public static BsonValue FromJson(String json) {
+        BsonDocument doc = BsonDocument.parse(json);
+        if (doc.containsKey("$wrap")) {
+            return doc.get("$wrap");
+        }
+        return doc;
     }
 
     public static BsonDocument NewArray() {
@@ -66,20 +78,6 @@ public class Data {
     public static BsonArray NewObject() {
         return new BsonArray(); //FromJson("{}");
     }
-
-    /*
-    public static void Dump(BsonValue val) {
-        var doc = new BsonDocument();
-        Dump(val, "");
-    }
-
-    public static void Dump(BsonValue val, String title) {
-        var doc = new BsonDocument();
-        doc.put("!", new BsonString(title + "[" + val.getClass().getName() + "]"));
-        doc.put("?", val);
-        System.out.println(ToJson(doc, true));
-    }
-    */
 
     public static void Print(Object val) {
         Print(val, null);
@@ -111,19 +109,40 @@ public class Data {
         if (x == null) return new BsonNull();
         if (x instanceof Integer) return new BsonInt32((int)x);
         if (x instanceof Long) return new BsonInt64((long)x);
+        if (x instanceof Double) return new BsonDouble((double)x);
         if (x instanceof String) return new BsonString((String)x);
         if (x instanceof Date) return new BsonDateTime(((Date)x).getTime());
         if (x instanceof byte[]) return new BsonBinary((byte[])x);
-        return null;
+        throw new RuntimeException(x.getClass().getName());
+        //return null;
     }
 
     public static Object FromValue(BsonValue x) {
         if (x == null) return null;
+        if (x instanceof BsonNull) return null;
         if (x instanceof BsonInt32) return x.asInt32().intValue();
+        if (x instanceof BsonDouble) return x.asDouble().doubleValue();
         if (x instanceof BsonInt64) return x.asInt64().longValue();
         if (x instanceof BsonString) return x.asString().getValue();
         if (x instanceof BsonDateTime) return new Date(x.asDateTime().getValue());
         if (x instanceof BsonBinary) return x.asBinary().getData();
+        if (x instanceof BsonArray) {
+            BsonArray array = x.asArray();
+            JSONArray result = new JSONArray();
+            for (int i=0; i<array.size(); i++) {
+                result.put(FromValue(array.get(i)));
+            }
+            return result;
+        }
+        if (x instanceof BsonDocument) {
+            BsonDocument doc = x.asDocument();
+            JSONObject result = new JSONObject();
+            Object[] keys = doc.keySet().toArray();
+            for (int i=0; i<keys.length; i++) {
+                result.put((String)keys[i], FromValue(doc.get((String)keys[i])));
+            }
+            return result;
+        }
         return x;
     }
 
