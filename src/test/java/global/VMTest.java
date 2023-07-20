@@ -2,23 +2,17 @@ package global;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Engine;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 
-import com.oracle.truffle.js.runtime.JSContextOptions;
-import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
-
-class VM8Test {
+class VMTest {
 
 	@Test
 	void test() throws Exception {
 
-		VM8 vm = new VM8();
+		VM vm = new VM();
 		//VM vm = new VM();
 
 		Object tmp = null;
@@ -42,9 +36,9 @@ class VM8Test {
 		vm.js("print(JSON.stringify(json, null, 2))");
 		assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}", vm.jsToJson("json").toString());
 		Object json = vm.js("json");
-		assertEquals(33, vm.jsToJson("$0.c[2]", json));
-		assertEquals(33, vm.jsToJson("$0.c[$1]", json, 2));
-		vm.jsToJson("$0.c[$1]=$2", json, 2, 777);
+		assertEquals(33, vm.jsToJson("_0.c[2]", json));
+		assertEquals(33, vm.jsToJson("_0.c[_1]", json, 2));
+		vm.jsToJson("_0.c[_1]=_2", json, 2, 777);
 		vm.js("print(JSON.stringify(json, null, 2))");
 		assertEquals(777, vm.js("json.c[2]"));
 		vm.print(json, "json");
@@ -55,9 +49,9 @@ class VM8Test {
 		vm.print(ary);
 		Object ref = vm.setGlobal("ary", ary);
 		vm.print(ref);
-		vm.js("$0[1]=777", ref);
+		vm.js("_0[1]=777", ref);
 		vm.print(vm.js("ary"));
-		vm.js("console.log($0)", "this is $0");
+		vm.js("console.log(_0)", "this is _0");
 		// vm.load(":/run.js");
 		// vm.load(":/error.js");
 		Object dt = vm.load(":/date.js");
@@ -71,7 +65,7 @@ class VM8Test {
 		vm.print(vm.newDate(new Date()), "vm.newDate(new Date()");
 
 		for (int i = 0; i < (int) vm.js("json.c.length"); i++) {
-			vm.print(vm.js("json.c[$0]", i), "enum");
+			vm.print(vm.js("json.c[_0]", i), "enum");
 		}
 
 		if ((boolean) vm.js("json.hasOwnProperty('a')")) {
