@@ -1,6 +1,10 @@
 package global;
 
+import com.oracle.truffle.api.dsl.Bind;
+import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,10 +13,16 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 
 public class GroovyVM {
+
+
     public GroovyShell _shell = null;
 
     public GroovyVM() {
-        this._shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
+        CompilerConfiguration config = new CompilerConfiguration();
+        config.setScriptBaseClass("global.GroovyVMPrototype");
+        this._shell = new GroovyShell(Thread.currentThread().getContextClassLoader(), new Binding(), config);
+        //this._shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
+        this.setGlobal("vm", this);
     }
 
     public void setGlobal(String name, Object x) {
@@ -20,13 +30,15 @@ public class GroovyVM {
     }
 
     private Object run(String script, Object[] args) {
+        Binding binding = new Binding();
         for (int i = 0; i < args.length; i++) {
-            this.setGlobal("_" + i, args[i]);
+            //this.setGlobal("_" + i, args[i]);
+            binding.setProperty("_" + i, args[i]);
         }
-        try {
-            return this._shell.evaluate(script);
-        } finally {
-        }
+        //return this._shell.evaluate(script);
+        Script script1 = this._shell.parse(script);
+        script1.setBinding(binding);
+        return script1.run();
     }
 
     public Object groovy(String script, Object... args) {
@@ -42,20 +54,20 @@ public class GroovyVM {
         }
     }
 
-    public void print(Object x, String title) {
+    public static void print(Object x, String title) {
         if (title != null) System.out.printf("%s: ", title);
         String result = "";
         if (x == null) result = "null";
-        else if (x instanceof JSONArray) result = ((JSONArray)x).toString(2);
-        else if (x instanceof JSONObject) result = ((JSONObject)x).toString(2);
+        else if (x instanceof JSONArray) result = ((JSONArray) x).toString(2);
+        else if (x instanceof JSONObject) result = ((JSONObject) x).toString(2);
         else result = x.toString();
         if (x != null)
             result = "<" + x.getClass().getSimpleName() + "> " + result;
         System.out.println(result);
     }
 
-    public void print(Object x) {
-        this.print(x, null);
+    public static void print(Object x) {
+        print(x, null);
     }
 
     public String toJson(Object x) {
