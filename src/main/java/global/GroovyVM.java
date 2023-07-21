@@ -33,15 +33,9 @@ public class GroovyVM {
     }
 
     private Object run(String script, Object[] args) {
-        //Binding binding = new Binding();
-        //binding.setProperty("vm", this);
         for (int i = 0; i < args.length; i++) {
-            //binding.setProperty("_" + i, args[i]);
             this.setVariable("_" + i, args[i]);
         }
-        //Script script1 = this._shell.parse(script);
-        //script1.setBinding(binding);
-        //return script1.run();
         return this.shell.evaluate(script);
     }
 
