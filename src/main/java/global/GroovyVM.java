@@ -16,7 +16,7 @@ public class GroovyVM {
         CompilerConfiguration config = new CompilerConfiguration();
         config.setScriptBaseClass("global.GroovyVMPrototype");
         this._shell = new GroovyShell(Thread.currentThread().getContextClassLoader(), new Binding(), config);
-        //this._shell.setProperty("vm", this);
+        this.setGlobal("vm", this);
     }
 
     public void setGlobal(String name, Object x) {
@@ -24,14 +24,16 @@ public class GroovyVM {
     }
 
     private Object run(String script, Object[] args) {
-        Binding binding = new Binding();
-        binding.setProperty("vm", this);
+        //Binding binding = new Binding();
+        //binding.setProperty("vm", this);
         for (int i = 0; i < args.length; i++) {
-            binding.setProperty("_" + i, args[i]);
+            //binding.setProperty("_" + i, args[i]);
+            this.setGlobal("_" + i, args[i]);
         }
-        Script script1 = this._shell.parse(script);
-        script1.setBinding(binding);
-        return script1.run();
+        //Script script1 = this._shell.parse(script);
+        //script1.setBinding(binding);
+        //return script1.run();
+        return this._shell.evaluate(script);
     }
 
     public Object groovy(String script, Object... args) {
