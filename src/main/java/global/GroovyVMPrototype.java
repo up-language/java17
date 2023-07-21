@@ -4,11 +4,11 @@ import groovy.lang.Script;
 
 public abstract class GroovyVMPrototype extends Script {
     public void echo(Object x, String title) {
-        GroovyVM.echo(x, title);
+        GroovyVM._echo(x, title);
     }
 
     public void echo(Object x) {
-        GroovyVM.echo(x);
+        GroovyVM._echo(x);
     }
 
 }

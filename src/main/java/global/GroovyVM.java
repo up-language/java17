@@ -58,7 +58,7 @@ public class GroovyVM {
         }
     }
 
-    public static void echo(Object x, String title) {
+    protected static void _echo(Object x, String title) {
         if (title != null) System.out.printf("%s: ", title);
         String result = "";
         if (x == null) result = "null";
@@ -70,8 +70,16 @@ public class GroovyVM {
         System.out.println(result);
     }
 
-    public static void echo(Object x) {
-        echo(x, null);
+    protected static void _echo(Object x) {
+        _echo(x, null);
+    }
+
+    public void echo(Object x, String title) {
+        _echo(x, title);
+    }
+
+    public void echo(Object x) {
+        _echo(x);
     }
 
     public String toJson(Object x) {
