@@ -1,16 +1,11 @@
 package global;
 
-import com.oracle.truffle.api.dsl.Bind;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import javax.script.ScriptException;
-import java.util.AbstractList;
-import java.util.AbstractMap;
 
 public class GroovyVM {
 
@@ -21,6 +16,7 @@ public class GroovyVM {
         CompilerConfiguration config = new CompilerConfiguration();
         config.setScriptBaseClass("global.GroovyVMPrototype");
         this._shell = new GroovyShell(Thread.currentThread().getContextClassLoader(), new Binding(), config);
+        //this._shell.setProperty("vm", this);
     }
 
     public void setGlobal(String name, Object x) {
@@ -29,6 +25,7 @@ public class GroovyVM {
 
     private Object run(String script, Object[] args) {
         Binding binding = new Binding();
+        binding.setProperty("vm", this);
         for (int i = 0; i < args.length; i++) {
             binding.setProperty("_" + i, args[i]);
         }
@@ -50,7 +47,7 @@ public class GroovyVM {
         }
     }
 
-    public static void print(Object x, String title) {
+    public static void echo(Object x, String title) {
         if (title != null) System.out.printf("%s: ", title);
         String result = "";
         if (x == null) result = "null";
@@ -62,8 +59,8 @@ public class GroovyVM {
         System.out.println(result);
     }
 
-    public static void print(Object x) {
-        print(x, null);
+    public static void echo(Object x) {
+        echo(x, null);
     }
 
     public String toJson(Object x) {
