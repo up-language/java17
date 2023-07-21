@@ -66,6 +66,8 @@ dependencies {
     api 'org.glassfish:jakarta.json:2.0.1'
     // https://mvnrepository.com/artifact/org.eclipse.parsson/parsson
     api 'org.eclipse.parsson:parsson:1.1.3'
+    // https://mvnrepository.com/artifact/org.python/jython-standalone
+    api 'org.python:jython-standalone:2.7.3'
 }
 
 test {
