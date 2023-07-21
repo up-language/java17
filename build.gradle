@@ -70,6 +70,8 @@ dependencies {
     api 'org.python:jython-standalone:2.7.3'
     // https://mvnrepository.com/artifact/org.jruby/jruby-complete
     api 'org.jruby:jruby-complete:9.4.3.0'
+    // https://mvnrepository.com/artifact/org.scala-lang/scala-library
+    api 'org.scala-lang:scala-library:2.13.11'
 }
 
 test {
