@@ -1,4 +1,4 @@
-package global;
+package system;
 
 import com.oracle.truffle.js.runtime.JSContextOptions;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;

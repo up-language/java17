@@ -1,4 +1,4 @@
-package global;
+package system;
 
 import groovy.lang.Script;
 

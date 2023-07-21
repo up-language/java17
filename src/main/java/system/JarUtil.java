@@ -1,4 +1,4 @@
-package global;
+package system;
 
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;

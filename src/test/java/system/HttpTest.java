@@ -1,6 +1,4 @@
-package global;
-
-import static org.junit.jupiter.api.Assertions.*;
+package system;
 
 import java.io.IOException;
 import java.net.URI;

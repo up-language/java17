@@ -1,14 +1,12 @@
-package global;
+package system;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.script.ScriptException;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
