@@ -23,15 +23,18 @@ public class GroovyVM {
 
     public GroovyVM() {
         this.binding.setProperty("vm", this);
-        CompilerConfiguration config = new CompilerConfiguration();
-        config.setScriptBaseClass("global.GroovyVMPrototype");
-        this.shell = new GroovyShell(Thread.currentThread().getContextClassLoader(), this.binding, config);
+        //CompilerConfiguration config = new CompilerConfiguration();
+        //config.setScriptBaseClass("global.GroovyVMPrototype");
+        //this.shell = new GroovyShell(Thread.currentThread().getContextClassLoader(), this.binding, config);
+        this.shell = new GroovyShell(Thread.currentThread().getContextClassLoader(), this.binding);
+        /*
         this.groovy("""
                 readAsText = { path -> vm.readAsText(path) }
                 readAsJson = { path -> vm.readAsJson(path) }
                 load = { path -> vm.load(path) }
                 require = { path -> vm.require(path) }
                 """);
+         */
     }
 
     public void setVariable(String name, Object x) {
