@@ -2,9 +2,16 @@ package global;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import javax.script.ScriptException;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 
 public class GroovyVM {
 
@@ -12,11 +19,19 @@ public class GroovyVM {
     protected GroovyShell shell = null;
     protected Binding binding = new Binding();
 
+    public JSONObject imported = new JSONObject();
+
     public GroovyVM() {
         this.binding.setProperty("vm", this);
         CompilerConfiguration config = new CompilerConfiguration();
         config.setScriptBaseClass("global.GroovyVMPrototype");
         this.shell = new GroovyShell(Thread.currentThread().getContextClassLoader(), this.binding, config);
+        this.groovy("""
+                readAsText = { path -> vm.readAsText(path) }
+                readAsJson = { path -> vm.readAsJson(path) }
+                load = { path -> vm.load(path) }
+                require = { path -> vm.require(path) }
+                """);
     }
 
     public void setVariable(String name, Object x) {
@@ -98,6 +113,41 @@ public class GroovyVM {
             result.put((String) args[i], args[i + 1]);
         }
         return result;
+    }
+
+    public String readAsText(String path) throws Exception {
+        if (path.startsWith(":/")) {
+            return ResourceUtil.GetString(path.substring(2));
+        } else if (path.startsWith("http:") || path.startsWith("https:")) {
+            try (InputStream in = new URL(path).openStream()) {
+                return IOUtils.toString(in);
+            }
+        } else {
+            return FileUtils.readFileToString(new File(path));
+        }
+    }
+
+    public Object readAsJson(String path) throws Exception {
+        return fromJson(readAsText(path));
+    }
+
+    public Object load(String path) throws Exception {
+        return groovy(readAsText(path));
+    }
+
+    public void require(String path) throws Exception {
+        if (path.startsWith(":/")) {
+        } else if (path.startsWith("http:") || path.startsWith("https:")) {
+        } else {
+            path = new File(path).getAbsolutePath();
+        }
+        if (this.imported.has(path)) {
+            long count = this.imported.getLong(path);
+            this.imported.put(path, count + 1);
+            return;
+        }
+        groovy(readAsText(path));
+        this.imported.put(path, 1);
     }
 
 }
