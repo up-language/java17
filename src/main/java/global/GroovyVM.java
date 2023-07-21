@@ -5,6 +5,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.script.ScriptException;
+import java.util.AbstractList;
+import java.util.AbstractMap;
 
 public class GroovyVM {
     public GroovyShell _shell = null;
@@ -50,6 +52,34 @@ public class GroovyVM {
         if (x != null)
             result = "<" + x.getClass().getSimpleName() + "> " + result;
         System.out.println(result);
+    }
+
+    public void print(Object x) {
+        this.print(x, null);
+    }
+
+    public String toJson(Object x) {
+        return Data.ToJson(Data.ToValue(x), true);
+    }
+
+    public Object fromJson(String json) {
+        return Data.FromValue(Data.FromJson(json));
+    }
+
+    public JSONArray newArray(Object... args) {
+        JSONArray result = new JSONArray();
+        for (int i = 0; i < args.length; i++) {
+            result.put(args[i]);
+        }
+        return result;
+    }
+
+    public JSONObject newObject(Object... args) {
+        JSONObject result = new JSONObject();
+        for (int i = 0; i < args.length; i += 2) {
+            result.put((String) args[i], args[i + 1]);
+        }
+        return result;
     }
 
 }

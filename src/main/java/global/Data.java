@@ -82,12 +82,13 @@ public class Data {
     public static void Print(Object val) {
         Print(val, null);
     }
+
     public static void Print(Object val, String title) {
         if (title != null) System.out.printf("%s: ", title);
         Object x = null;
         if (val instanceof BsonValue) {
             var doc = new BsonDocument();
-            doc.put("?", (BsonValue)val);
+            doc.put("?", (BsonValue) val);
             String json = ToJson(doc, false);
             JSONObject obj = new JSONObject(json);
             x = obj.get("?");
@@ -97,8 +98,8 @@ public class Data {
         String result = "";
         if (x == null) result = "null";
         else if (x instanceof JsonNull) result = "null";
-        else if (x instanceof JSONArray) result = ((JSONArray)x).toString(2);
-        else if (x instanceof JSONObject) result = ((JSONObject)x).toString(2);
+        else if (x instanceof JSONArray) result = ((JSONArray) x).toString(2);
+        else if (x instanceof JSONObject) result = ((JSONObject) x).toString(2);
         else result = x.toString();
         if (val != null)
             result = "<" + val.getClass().getSimpleName() + "> " + result;
@@ -107,12 +108,35 @@ public class Data {
 
     public static BsonValue ToValue(Object x) {
         if (x == null) return new BsonNull();
-        if (x instanceof Integer) return new BsonInt32((int)x);
-        if (x instanceof Long) return new BsonInt64((long)x);
-        if (x instanceof Double) return new BsonDouble((double)x);
-        if (x instanceof String) return new BsonString((String)x);
-        if (x instanceof Date) return new BsonDateTime(((Date)x).getTime());
-        if (x instanceof byte[]) return new BsonBinary((byte[])x);
+        if (x instanceof Integer) return new BsonInt32((int) x);
+        if (x instanceof Long) return new BsonInt64((long) x);
+        if (x instanceof Double) return new BsonDouble((double) x);
+        if (x instanceof String) return new BsonString((String) x);
+        if (x instanceof Date) return new BsonDateTime(((Date) x).getTime());
+        if (x instanceof byte[]) return new BsonBinary((byte[]) x);
+        if (x instanceof JSONArray) {
+            JSONArray array = (JSONArray) x;
+            BsonArray result = new BsonArray();
+            for (int i = 0; i < array.length(); i++) {
+                if (array.isNull(i))
+                    result.add(ToValue(null));
+                else
+                    result.add(ToValue(array.get(i)));
+            }
+            return result;
+        }
+        if (x instanceof JSONObject) {
+            JSONObject object = (JSONObject) x;
+            BsonDocument result = new BsonDocument();
+            Object[] keys = object.keySet().toArray();
+            for (int i = 0; i < keys.length; i++) {
+                if (object.isNull((String) keys[i]))
+                    result.put((String) keys[i], ToValue(null));
+                else
+                    result.put((String) keys[i], ToValue(object.get((String) keys[i])));
+            }
+            return result;
+        }
         throw new RuntimeException(x.getClass().getName());
         //return null;
     }
@@ -129,7 +153,7 @@ public class Data {
         if (x instanceof BsonArray) {
             BsonArray array = x.asArray();
             JSONArray result = new JSONArray();
-            for (int i=0; i<array.size(); i++) {
+            for (int i = 0; i < array.size(); i++) {
                 result.put(FromValue(array.get(i)));
             }
             return result;
@@ -138,8 +162,8 @@ public class Data {
             BsonDocument doc = x.asDocument();
             JSONObject result = new JSONObject();
             Object[] keys = doc.keySet().toArray();
-            for (int i=0; i<keys.length; i++) {
-                result.put((String)keys[i], FromValue(doc.get((String)keys[i])));
+            for (int i = 0; i < keys.length; i++) {
+                result.put((String) keys[i], FromValue(doc.get((String) keys[i])));
             }
             return result;
         }
