@@ -65,6 +65,15 @@ public class DynamicObject {
         list.add(strip(x));
     }
 
+    public void putAt(int index, Object x) {
+        java.util.List<Object> list = (java.util.List<Object>) this.value;
+        list.set(index, strip(x));
+    }
+
+    public void putAt(DynamicObject index, Object x) {
+        putAt(index.asInt(), x);
+    }
+
     public static DynamicObject newMap(Object[] args) {
         java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {

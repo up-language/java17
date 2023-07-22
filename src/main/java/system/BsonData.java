@@ -181,7 +181,7 @@ public class BsonData {
         }
         if (x instanceof BsonDocument) {
             BsonDocument doc = x.asDocument();
-            java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
+            java.util.Map<String, Object> result = new java.util.LinkedHashMap<String, Object>();
             Object[] keys = doc.keySet().toArray();
             for (int i = 0; i < keys.length; i++) {
                 result.put((String) keys[i], FromValue(doc.get((String) keys[i])));

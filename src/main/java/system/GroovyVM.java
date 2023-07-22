@@ -17,7 +17,7 @@ public class GroovyVM {
     protected Binding binding = new Binding();
 
     //public JSONObject imported = new JSONObject();
-    public java.util.Map<String, Long> imported = new java.util.HashMap<String, Long>();
+    public java.util.Map<String, Long> imported = new java.util.LinkedHashMap<String, Long>();
 
     public GroovyVM() {
         this.binding.setProperty("vm", this);
@@ -109,10 +109,13 @@ public class GroovyVM {
     }
 
     public String toJson(Object x) {
+        /*
         if (x instanceof DynamicObject)
             return BsonData.ToJson(((DynamicObject) x).toBsonValue(), true);
         else
             return BsonData.ToJson(BsonData.ToValue(x), true);
+        */
+        return BsonData.ToJson(BsonData.ToValue(x), true);
     }
 
     public Object fromJson(String json) {
@@ -120,7 +123,6 @@ public class GroovyVM {
         return DynamicObject.fromBsonValue(BsonData.FromJson(json));
     }
 
-    /*
     public java.util.List<Object> newList(Object... args) {
         java.util.List<Object> result = new java.util.ArrayList<Object>();
         for (int i = 0; i < args.length; i++) {
@@ -130,14 +132,14 @@ public class GroovyVM {
     }
 
     public java.util.Map<String, Object> newMap(Object... args) {
-        java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
+        java.util.Map<String, Object> result = new java.util.LinkedHashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {
             result.put((String) args[i], args[i + 1]);
         }
         return result;
     }
-    */
 
+    /*
     public DynamicObject newList(Object... args) {
         return DynamicObject.newList(args);
     }
@@ -145,6 +147,7 @@ public class GroovyVM {
     public DynamicObject newMap(Object... args) {
         return DynamicObject.newMap(args);
     }
+    */
 
     public String readAsText(String path) throws Exception {
         if (path.startsWith(":/")) {
