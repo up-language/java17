@@ -79,6 +79,13 @@ dependencies {
     ////runtimeOnly 'org.jetbrains.kotlin:kotlin-scripting-jsr223:1.9.0'
 }
 
+sourceSets {
+    main {
+        java { srcDirs = [] }
+        groovy { srcDirs += ['src/main/java'] }
+    }
+}
+
 test {
   // JUnit platform を使う設定
   useJUnitPlatform()
