@@ -2,12 +2,14 @@ package system;
 
 import com.oracle.truffle.regex.tregex.util.json.JsonNull;
 import org.bson.*;
+import org.bson.types.*;
 import org.bson.codecs.BsonDocumentCodec;
 import org.bson.io.BasicOutputBuffer;
 import org.bson.json.JsonWriterSettings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Data {
@@ -106,6 +108,7 @@ public class Data {
         if (x instanceof Integer) return new BsonInt32((int) x);
         if (x instanceof Long) return new BsonInt64((long) x);
         if (x instanceof Double) return new BsonDouble((double) x);
+        if (x instanceof BigDecimal) return new BsonDecimal128(new Decimal128((BigDecimal) x));
         if (x instanceof String) return new BsonString((String) x);
         if (x instanceof Date) return new BsonDateTime(((Date) x).getTime());
         if (x instanceof byte[]) return new BsonBinary((byte[]) x);
@@ -157,8 +160,9 @@ public class Data {
         if (x == null) return null;
         if (x instanceof BsonNull) return null;
         if (x instanceof BsonInt32) return x.asInt32().intValue();
-        if (x instanceof BsonDouble) return x.asDouble().doubleValue();
         if (x instanceof BsonInt64) return x.asInt64().longValue();
+        if (x instanceof BsonDouble) return x.asDouble().doubleValue();
+        if (x instanceof BsonDecimal128) return x.asDecimal128().decimal128Value().bigDecimalValue();
         if (x instanceof BsonString) return x.asString().getValue();
         if (x instanceof BsonDateTime) return new Date(x.asDateTime().getValue());
         if (x instanceof BsonBinary) return x.asBinary().getData();
