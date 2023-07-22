@@ -53,19 +53,15 @@ public class Data {
 
     public static String ToJson(BsonValue x, boolean indent) {
         BsonDocument doc = null;
-        if (x instanceof BsonDocument)
-            doc = (BsonDocument) x;
-        else {
-            doc = new BsonDocument();
-            doc.put("$wrap", x);
-        }
+        doc = new BsonDocument();
+        doc.put("$json", x);
         return doc.toJson(JsonWriterSettings.builder().indent(indent).build());
     }
 
     public static BsonValue FromJson(String json) {
         BsonDocument doc = BsonDocument.parse(json);
-        if (doc.containsKey("$wrap")) {
-            return doc.get("$wrap");
+        if (doc.containsKey("$json")) {
+            return doc.get("$json");
         }
         return doc;
     }
@@ -113,6 +109,23 @@ public class Data {
         if (x instanceof String) return new BsonString((String) x);
         if (x instanceof Date) return new BsonDateTime(((Date) x).getTime());
         if (x instanceof byte[]) return new BsonBinary((byte[]) x);
+        if (x instanceof java.util.List<?>) {
+            java.util.List<?> array = (java.util.List<?>) x;
+            BsonArray result = new BsonArray();
+            for (int i = 0; i < array.size(); i++) {
+                result.add(ToValue(array.get(i)));
+            }
+            return result;
+        }
+        if (x instanceof java.util.Map<?, ?>) {
+            java.util.Map<?, ?> object = (java.util.Map<?, ?>) x;
+            BsonDocument result = new BsonDocument();
+            Object[] keys = object.keySet().toArray();
+            for (int i = 0; i < keys.length; i++) {
+                result.put((String) keys[i], ToValue(object.get((String) keys[i])));
+            }
+            return result;
+        }
         if (x instanceof JSONArray) {
             JSONArray array = (JSONArray) x;
             BsonArray result = new BsonArray();

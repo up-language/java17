@@ -13,11 +13,11 @@ import java.net.URL;
 
 public class GroovyVM {
 
-
     protected GroovyShell shell = null;
     protected Binding binding = new Binding();
 
-    public JSONObject imported = new JSONObject();
+    //public JSONObject imported = new JSONObject();
+    public java.util.Map<String, Long> imported = new java.util.HashMap<String, Long>();
 
     public GroovyVM() {
         this.binding.setProperty("vm", this);
@@ -68,7 +68,7 @@ public class GroovyVM {
         }
     }
 
-    protected static void _echo(Object x, String title) {
+    public void echo(Object x, String title) {
         if (title != null) System.out.printf("%s: ", title);
         String result = "";
         if (x == null) result = "null";
@@ -76,20 +76,26 @@ public class GroovyVM {
         else if (x instanceof JSONObject) result = ((JSONObject) x).toString(2);
         else result = x.toString();
         if (x != null)
-            result = "<" + x.getClass().getSimpleName() + "> " + result;
+            //result = "<" + x.getClass().getSimpleName() + "> " + result;
+            result = "<" + x.getClass().getName() + "> " + result;
         System.out.println(result);
     }
 
-    protected static void _echo(Object x) {
-        _echo(x, null);
-    }
-
-    public void echo(Object x, String title) {
-        _echo(x, title);
-    }
-
     public void echo(Object x) {
-        _echo(x);
+        echo(x, null);
+    }
+
+    public void echoJson(Object x, String title) {
+        if (title != null) System.out.printf("%s: ", title);
+        String json = toJson(x);
+        if (x != null)
+            //json = "<" + x.getClass().getSimpleName() + "> " + json;
+            json = "<" + x.getClass().getName() + "> " + json;
+        System.out.println(json);
+    }
+
+    public void echoJson(Object x) {
+        echoJson(x, null);
     }
 
     public String toJson(Object x) {
@@ -100,25 +106,7 @@ public class GroovyVM {
         return Data.FromValue(Data.FromJson(json));
     }
 
-    /*
-    public JSONArray newArray(Object... args) {
-        JSONArray result = new JSONArray();
-        for (int i = 0; i < args.length; i++) {
-            result.put(args[i]);
-        }
-        return result;
-    }
-
-    public JSONObject newObject(Object... args) {
-        JSONObject result = new JSONObject();
-        for (int i = 0; i < args.length; i += 2) {
-            result.put((String) args[i], args[i + 1]);
-        }
-        return result;
-    }
-    */
-
-    public java.util.List<Object> newArray(Object... args) {
+    public java.util.List<Object> newList(Object... args) {
         java.util.List<Object> result = new java.util.ArrayList<Object>();
         for (int i = 0; i < args.length; i++) {
             result.add(args[i]);
@@ -126,7 +114,7 @@ public class GroovyVM {
         return result;
     }
 
-    public java.util.Map<String, Object> newObject(Object... args) {
+    public java.util.Map<String, Object> newMap(Object... args) {
         java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {
             result.put((String) args[i], args[i + 1]);
@@ -160,13 +148,13 @@ public class GroovyVM {
         } else {
             path = new File(path).getAbsolutePath();
         }
-        if (this.imported.has(path)) {
-            long count = this.imported.getLong(path);
+        if (this.imported.containsKey(path)) {
+            long count = this.imported.get(path);
             this.imported.put(path, count + 1);
             return;
         }
         eval(readAsText(path));
-        this.imported.put(path, 1);
+        this.imported.put(path, 1L);
     }
 
 }
