@@ -116,6 +116,7 @@ public class GroovyVM {
         return DynamicObject.fromBsonValue(BsonData.FromJson(json));
     }
 
+    /*
     public java.util.List<Object> newList(Object... args) {
         java.util.List<Object> result = new java.util.ArrayList<Object>();
         for (int i = 0; i < args.length; i++) {
@@ -130,6 +131,15 @@ public class GroovyVM {
             result.put((String) args[i], args[i + 1]);
         }
         return result;
+    }
+    */
+
+    public DynamicObject newList(Object...args) {
+        return DynamicObject.newList(args);
+    }
+
+    public DynamicObject newMap(Object...args) {
+        return DynamicObject.newMap(args);
     }
 
     public String readAsText(String path) throws Exception {

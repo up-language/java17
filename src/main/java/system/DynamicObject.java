@@ -33,7 +33,7 @@ public class DynamicObject {
         }
     }
 
-    public static DynamicObject newList(Object... args) {
+    public static DynamicObject newList(Object[] args) {
         java.util.List<Object> result = new java.util.ArrayList<Object>();
         for (int i = 0; i < args.length; i++) {
             result.add(strip(args[i]));
@@ -46,15 +46,15 @@ public class DynamicObject {
         return list.size();
     }
 
-    public DynamicObject at(int index) {
+    public DynamicObject getAt(int index) {
         java.util.List<Object> list = (java.util.List<Object>) this.value;
         Object result = list.get(index);
         if (result == null) return null;
         return new DynamicObject(result);
     }
 
-    public DynamicObject at(DynamicObject index) {
-        return at(index.asInt());
+    public DynamicObject getAt(DynamicObject index) {
+        return getAt(index.asInt());
     }
 
     public void add(Object x) {
@@ -62,7 +62,7 @@ public class DynamicObject {
         list.add(strip(x));
     }
 
-    public static DynamicObject newMap(Object... args) {
+    public static DynamicObject newMap(Object[] args) {
         java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {
             result.put((String) strip(args[i]), strip(args[i + 1]));
@@ -73,7 +73,7 @@ public class DynamicObject {
     public DynamicObject keys() {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         var keys = map.keySet().toArray();
-        var result = newList();
+        var result = newList(new Object[] {});
         for (int i = 0; i < keys.length; i++) {
             result.add(keys[i]);
         }
@@ -83,7 +83,9 @@ public class DynamicObject {
     public DynamicObject get(String key) {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         if (!map.containsKey(key)) return null;
-        return new DynamicObject(map.get(key));
+        var result = map.get(key);
+        if (result == null) return null;
+        return new DynamicObject(result);
     }
 
     public DynamicObject get(DynamicObject key) {
@@ -152,7 +154,7 @@ public class DynamicObject {
     public static DynamicObject fromBsonValue(BsonValue x) {
         if (x instanceof BsonArray) {
             var array = (BsonArray)x;
-            var result = newList();
+            var result = newList(new Object[] {});
             for (int i=0; i<array.size(); i++) {
                 result.add(fromBsonValue(array.get(i)));
             }
@@ -160,7 +162,7 @@ public class DynamicObject {
         }
         if (x instanceof BsonDocument) {
             var doc = (BsonDocument)x;
-            var result = newMap();
+            var result = newMap(new Object[] {});
             var keys = doc.keySet().toArray();
             for (int i=0; i<keys.length; i++) {
                 result.put((String)keys[i], fromBsonValue(doc.get((String)keys[i])));
