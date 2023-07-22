@@ -10,7 +10,7 @@ class Core {
     Core(GroovyVM vm) {
         this.vm = vm
     }
-    Dynamic info() {
+    def info() {
         info = [:]
         String userHomeDir = System.getProperty("user.home")
         info.userHomeDir = userHomeDir
@@ -26,6 +26,11 @@ class Core {
         json = vm.toJson(obj)
         vm.echo(json)
         MiscUtil.WriteStringToFile(settingsPath, json)
-        return new Dynamic(info)
+        //return new Dynamic(info)
+        return info
+    }
+    def stripTest(inf) {
+        inf = Dynamic.strip(inf)
+        vm.echo(inf)
     }
 }

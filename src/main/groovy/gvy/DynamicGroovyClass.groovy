@@ -9,7 +9,7 @@ class DynamicGroovyClass {
 
     Dynamic returnList() {
         def result = ['a', 11, null]
-        return Dynamic.fromStatic(result)
+        return Dynamic.wrap(result)
     }
 
     def receiveDynamicList(Dynamic list) {

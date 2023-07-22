@@ -25,7 +25,13 @@ public class Dynamic {
         return this.value;
     }
 
-    protected static Object strip(Object x) {
+    public static Dynamic wrap(Object x) {
+        if (x == null) return null;
+        if (x instanceof Dynamic) return (Dynamic) x;
+        return new Dynamic(x);
+    }
+
+    public static Object strip(Object x) {
         if (x == null) {
             return null;
         } else if (!(x instanceof Dynamic)) {
@@ -186,16 +192,6 @@ public class Dynamic {
         var val = BsonData.FromValue(x);
         if (val == null) return null;
         return new Dynamic(val);
-    }
-
-    public static Dynamic fromStatic(Object x) {
-        if (x == null) return null;
-        if (x instanceof Dynamic) return (Dynamic) x;
-        return new Dynamic(x);
-    }
-
-    public static Object toStatic(Dynamic x) {
-        return x.value;
     }
 
 }
