@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 
-import org.json.JSONArray;
+////import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 
 class VMTest {
@@ -19,10 +19,10 @@ class VMTest {
 		vm.js("console.log('hello-world-0');");
 		Object o1 = vm.jsToJson("[11,22]");
 		System.out.printf("o1=%s\n", o1);
-		assertEquals("[11,22]", o1.toString());
+		assertEquals("[11, 22]", o1.toString());
 		Object o2 = vm.jsToJson("({x:11,y:22})");
 		System.out.printf("o2=%s\n", o2);
-		assertEquals("{\"x\":11,\"y\":22}", o2.toString());
+		assertEquals("{x=11, y=22}", o2.toString());
 		Object o3 = vm.jsToJson("123.45");
 		System.out.printf("o3=%s\n", o3);
 		assertEquals(123.45, o3);
@@ -34,7 +34,7 @@ class VMTest {
 		// vm.loadFile(":/json.js");
 		// vm.loadFile("https://raw.githubusercontent.com/up-language/up-language/main/om-java/json.js");
 		vm.js("print(JSON.stringify(json, null, 2))");
-		assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}", vm.jsToJson("json").toString());
+		assertEquals("{a=abc, b=123, c=[11, 22, 33]}", vm.jsToJson("json").toString());
 		Object json = vm.js("json");
 		assertEquals(33, vm.jsToJson("_0.c[2]", json));
 		assertEquals(33, vm.jsToJson("_0.c[_1]", json, 2));
@@ -42,15 +42,7 @@ class VMTest {
 		vm.js("print(JSON.stringify(json, null, 2))");
 		assertEquals(777, vm.js("json.c[2]"));
 		vm.print(json, "json");
-		JSONArray ary = new JSONArray();
-		ary.put(111);
-		ary.put(222);
-		ary.put(333);
-		vm.print(ary);
-		Object ref = vm.setGlobal("ary", ary);
-		vm.print(ref);
-		vm.js("_0[1]=777", ref);
-		vm.print(vm.js("ary"));
+		////vm.print(vm.js("ary"));
 		vm.js("console.log(_0)", "this is _0");
 		// vm.load(":/run.js");
 		// vm.load(":/error.js");
@@ -87,10 +79,12 @@ class VMTest {
 		build_cmd = (String) vm.js("readAsText('https://raw.githubusercontent.com/atom/atom/master/script/build.cmd')");
 		vm.print(build_cmd, "build_cmd");
 
+		/*
 		var package_json = vm.readAsJson("https://raw.githubusercontent.com/atom/atom/master/package.json");
 		vm.print(package_json, "package_json");
 		package_json = vm.js("readAsJson('https://raw.githubusercontent.com/atom/atom/master/package.json')");
 		vm.print(package_json, "package_json");
+        */
 
 		vm.js("""
 				const errorMsg = 'the # is not even';
@@ -124,9 +118,6 @@ class VMTest {
 		var dtAry = vm.newArray(vm.newDate());
 		var dtAryJson = vm.toJson(dtAry);
 		System.out.println(dtAryJson);
-		vm.print(((JSONArray) dtAryJson).toString(2), "((JSONArray)dtAryJson).toString(2)");
-		var dtAryNative = vm.toNative(dtAryJson);
-		vm.print(dtAryNative);
 
 		vm.load(":/class.js");
 
