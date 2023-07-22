@@ -132,9 +132,11 @@ public class DynamicObject {
         return this.value.toString();
     }
 
+    /*
     public BsonValue toBsonValue() {
         return toBsonValue(this);
     }
+    */
 
     public static BsonValue toBsonValue(DynamicObject x) {
         if (x instanceof java.util.List<?>) {
@@ -184,6 +186,16 @@ public class DynamicObject {
         var val = BsonData.FromValue(x);
         if (val == null) return null;
         return new DynamicObject(val);
+    }
+
+    public static DynamicObject fromObject(Object x) {
+        if (x == null) return null;
+        if (x instanceof DynamicObject) return (DynamicObject) x;
+        return new DynamicObject(x);
+    }
+
+    public static Object toObjexxt(DynamicObject x) {
+        return x.value;
     }
 
 }
