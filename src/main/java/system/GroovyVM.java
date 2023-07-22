@@ -112,7 +112,8 @@ public class GroovyVM {
     }
 
     public Object fromJson(String json) {
-        return BsonData.FromValue(BsonData.FromJson(json));
+        //return BsonData.FromValue(BsonData.FromJson(json));
+        return DynamicObject.fromBsonValue(BsonData.FromJson(json));
     }
 
     public java.util.List<Object> newList(Object... args) {

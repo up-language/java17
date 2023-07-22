@@ -14,8 +14,12 @@ public class DynamicObject {
 
     @Override
     public String toString() {
-        if (this.value == null) return "null";
+        //if (this.value == null) return "null";
         return this.value.toString();
+    }
+
+    public String type() {
+        return this.value.getClass().getName();
     }
 
     protected static Object strip(Object x) {
@@ -69,10 +73,8 @@ public class DynamicObject {
     public DynamicObject keys() {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         var keys = map.keySet().toArray();
-        //String[] result = new String[keys.length];
         var result = newList();
         for (int i = 0; i < keys.length; i++) {
-            //result[i] = (String) keys[i];
             result.add(keys[i]);
         }
         return result;
@@ -86,6 +88,15 @@ public class DynamicObject {
 
     public DynamicObject get(DynamicObject key) {
         return get(key.asString());
+    }
+
+    public void put(String key, Object x) {
+        java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
+        map.put(key, strip(x));
+    }
+
+    public void put(DynamicObject key, Object x) {
+        put(key.asString(), x);
     }
 
     public int asInt() {
@@ -137,4 +148,28 @@ public class DynamicObject {
         }
         return BsonData.ToValue(x.value);
     }
+
+    public static DynamicObject fromBsonValue(BsonValue x) {
+        if (x instanceof BsonArray) {
+            var array = (BsonArray)x;
+            var result = newList();
+            for (int i=0; i<array.size(); i++) {
+                result.add(fromBsonValue(array.get(i)));
+            }
+            return result;
+        }
+        if (x instanceof BsonDocument) {
+            var doc = (BsonDocument)x;
+            var result = newMap();
+            var keys = doc.keySet().toArray();
+            for (int i=0; i<keys.length; i++) {
+                result.put((String)keys[i], fromBsonValue(doc.get((String)keys[i])));
+            }
+            return result;
+        }
+        var val = BsonData.FromValue(x);
+        if (val == null) return null;
+        return new DynamicObject(val);
+    }
+
 }

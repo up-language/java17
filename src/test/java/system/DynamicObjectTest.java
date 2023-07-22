@@ -29,6 +29,10 @@ class DynamicObjectTest {
         }
         vm.echoJson(list);
         vm.echoJson(map);
+        var listJson = vm.toJson(list);
+        vm.echo(vm.fromJson(listJson));
+        var mapJson = vm.toJson(map);
+        vm.echo(vm.fromJson(mapJson));
     }
 
 }
