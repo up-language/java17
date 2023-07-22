@@ -14,12 +14,15 @@ public class DynamicObject {
 
     @Override
     public String toString() {
-        //if (this.value == null) return "null";
         return this.value.toString();
     }
 
     public String type() {
         return this.value.getClass().getName();
+    }
+
+    public Object value() {
+        return this.value;
     }
 
     protected static Object strip(Object x) {
