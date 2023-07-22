@@ -14,7 +14,7 @@ public class VMCommon {
     }
 
     public static Object fromJson(String json) {
-        return Dynamic.fromBsonValue(BsonData.FromJson(json));
+        return BsonData.FromValue(BsonData.FromJson(json));
     }
 
     public static void echo(Object x, String title) {
