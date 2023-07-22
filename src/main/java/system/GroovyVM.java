@@ -147,6 +147,8 @@ public class GroovyVM {
     }
 
     public String readAsText(String path) throws Exception {
+        return VMCommon.readAsText(path);
+        /*
         if (path.startsWith(":/")) {
             return ResourceUtil.GetString(path.substring(2));
         } else if (path.startsWith("http:") || path.startsWith("https:")) {
@@ -156,10 +158,12 @@ public class GroovyVM {
         } else {
             return FileUtils.readFileToString(new File(path));
         }
+        */
     }
 
     public Object readAsJson(String path) throws Exception {
-        return fromJson(readAsText(path));
+        return VMCommon.readAsJson(path);
+        //return fromJson(readAsText(path));
     }
 
     public Object load(String path) throws Exception {
