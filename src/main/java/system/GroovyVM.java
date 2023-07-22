@@ -55,11 +55,11 @@ public class GroovyVM {
         return this.shell.evaluate(script);
     }
 
-    public Object groovy(String script, Object... args) {
+    public Object eval(String script, Object... args) {
         return run(script, args);
     }
 
-    public Object __groovy__(String script, Object... args) {
+    public Object __eval__(String script, Object... args) {
         try {
             return run(script, args);
         } catch (Exception e) {
@@ -100,6 +100,7 @@ public class GroovyVM {
         return Data.FromValue(Data.FromJson(json));
     }
 
+    /*
     public JSONArray newArray(Object... args) {
         JSONArray result = new JSONArray();
         for (int i = 0; i < args.length; i++) {
@@ -110,6 +111,23 @@ public class GroovyVM {
 
     public JSONObject newObject(Object... args) {
         JSONObject result = new JSONObject();
+        for (int i = 0; i < args.length; i += 2) {
+            result.put((String) args[i], args[i + 1]);
+        }
+        return result;
+    }
+    */
+
+    public java.util.List<Object> newArray(Object... args) {
+        java.util.List<Object> result = new java.util.ArrayList<Object>();
+        for (int i = 0; i < args.length; i++) {
+            result.add(args[i]);
+        }
+        return result;
+    }
+
+    public java.util.Map<String, Object> newObject(Object... args) {
+        java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {
             result.put((String) args[i], args[i + 1]);
         }
@@ -133,7 +151,7 @@ public class GroovyVM {
     }
 
     public Object load(String path) throws Exception {
-        return groovy(readAsText(path));
+        return eval(readAsText(path));
     }
 
     public void require(String path) throws Exception {
@@ -147,7 +165,7 @@ public class GroovyVM {
             this.imported.put(path, count + 1);
             return;
         }
-        groovy(readAsText(path));
+        eval(readAsText(path));
         this.imported.put(path, 1);
     }
 

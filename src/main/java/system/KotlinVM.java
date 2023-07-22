@@ -58,5 +58,28 @@ public class KotlinVM {
         echo(x, null);
     }
 
+    public String toJson(Object x) {
+        return Data.ToJson(Data.ToValue(x), true);
+    }
+
+    public Object fromJson(String json) {
+        return Data.FromValue(Data.FromJson(json));
+    }
+
+    public java.util.List<Object> newArray(Object... args) {
+        java.util.List<Object> result = new java.util.ArrayList<Object>();
+        for (int i = 0; i < args.length; i++) {
+            result.add(args[i]);
+        }
+        return result;
+    }
+
+    public java.util.Map<String, Object> newObject(Object... args) {
+        java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
+        for (int i = 0; i < args.length; i += 2) {
+            result.put((String) args[i], args[i + 1]);
+        }
+        return result;
+    }
 
 }
