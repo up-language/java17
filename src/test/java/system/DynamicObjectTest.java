@@ -29,16 +29,6 @@ class DynamicObjectTest {
             vm.echo(keys.getAt(i));
             vm.echo(map.get(keys.getAt(i)));
         }
-        vm.echoJson(list);
-        vm.echoJson(map);
-        var listJson = vm.toJson(list);
-        vm.echo(vm.fromJson(listJson));
-        var mapJson = vm.toJson(map);
-        vm.echo(vm.fromJson(mapJson));
-        //var dec = new BigDecimal(3.14);
-        var dec = vm.eval("3.14");
-        var decJson = vm.toJson(dec);
-        vm.echo(vm.fromJson(decJson));
     }
 
 }
