@@ -23,8 +23,8 @@ import org.apache.commons.io.IOUtils;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.HostAccess;
-import org.json.JSONArray;
-import org.json.JSONObject;
+////import org.json.JSONArray;
+////import org.json.JSONObject;
 
 public class VM implements Closeable, VMInterface {
 
@@ -212,16 +212,16 @@ public class VM implements Closeable, VMInterface {
 		case "com.oracle.truffle.polyglot.PolyglotList": {
 			@SuppressWarnings("unchecked")
 			AbstractList<Object> ary = (AbstractList<Object>) x;
-			JSONArray result = new JSONArray();
+			java.util.List<Object> result = new java.util.ArrayList<Object>();
 			for (int i = 0; i < ary.size(); i++) {
-				result.put(i, toJson(ary.get(i)));
+				result.add(i, toJson(ary.get(i)));
 			}
 			return result;
 		}
 		case "com.oracle.truffle.polyglot.PolyglotMap": {
 			@SuppressWarnings("unchecked")
 			AbstractMap<String, Object> obj = (AbstractMap<String, Object>) x;
-			JSONObject result = new JSONObject();
+			java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
 			Object[] keys = obj.keySet().toArray();
 			for (int i = 0; i < keys.length; i++) {
 				result.put((String) keys[i], toJson(obj.get((String) keys[i])));
@@ -246,6 +246,7 @@ public class VM implements Closeable, VMInterface {
 		String className = x.getClass().getName();
 		switch (className) {
 
+			/*
 		case "org.json.JSONArray": {
 			org.json.JSONArray ary = (org.json.JSONArray) x;
 			@SuppressWarnings("unchecked")
@@ -265,6 +266,7 @@ public class VM implements Closeable, VMInterface {
 			}
 			return result;
 		}
+        */
 		default: {
 			return x;
 		}

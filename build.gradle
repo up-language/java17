@@ -41,7 +41,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.mozilla/rhino-engine
     api 'org.mozilla:rhino-engine:1.7.14'
     // https://mvnrepository.com/artifact/org.json/json
-    api 'org.json:json:20230618'
+    ////api 'org.json:json:20230618'
     // https://mvnrepository.com/artifact/com.eclipsesource.j2v8/j2v8_win32_x86_64
     api 'com.eclipsesource.j2v8:j2v8_win32_x86_64:4.6.0'
     // https://mvnrepository.com/artifact/org.graalvm.js/js

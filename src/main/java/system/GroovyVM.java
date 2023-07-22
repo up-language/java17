@@ -4,8 +4,8 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+////import org.json.JSONArray;
+////import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
@@ -78,8 +78,8 @@ public class GroovyVM {
         if (title != null) System.out.printf("%s: ", title);
         String result = "";
         if (x == null) result = "null";
-        else if (x instanceof JSONArray) result = ((JSONArray) x).toString(2);
-        else if (x instanceof JSONObject) result = ((JSONObject) x).toString(2);
+        ////else if (x instanceof JSONArray) result = ((JSONArray) x).toString(2);
+        ////else if (x instanceof JSONObject) result = ((JSONObject) x).toString(2);
         else result = x.toString();
         if (x != null)
             //result = "<" + x.getClass().getSimpleName() + "> " + result;

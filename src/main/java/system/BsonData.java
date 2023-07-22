@@ -6,8 +6,8 @@ import org.bson.types.*;
 import org.bson.codecs.BsonDocumentCodec;
 import org.bson.io.BasicOutputBuffer;
 import org.bson.json.JsonWriterSettings;
-import org.json.JSONArray;
-import org.json.JSONObject;
+////import org.json.JSONArray;
+////import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -75,10 +75,13 @@ public class BsonData {
         return new BsonArray();
     }
 
+    /*
     public static void Print(Object val) {
         Print(val, null);
     }
+    */
 
+    /*
     public static void Print(Object val, String title) {
         if (title != null) System.out.printf("%s: ", title);
         Object x = null;
@@ -101,6 +104,7 @@ public class BsonData {
             result = "<" + val.getClass().getSimpleName() + "> " + result;
         System.out.println(result);
     }
+    */
 
     public static BsonValue ToValue(Object x) {
         if (x == null) return new BsonNull();
@@ -128,6 +132,7 @@ public class BsonData {
             }
             return result;
         }
+        /*
         if (x instanceof JSONArray) {
             JSONArray array = (JSONArray) x;
             BsonArray result = new BsonArray();
@@ -151,6 +156,7 @@ public class BsonData {
             }
             return result;
         }
+        */
         throw new RuntimeException(x.getClass().getName());
         //return null;
     }
@@ -167,15 +173,15 @@ public class BsonData {
         if (x instanceof BsonBinary) return x.asBinary().getData();
         if (x instanceof BsonArray) {
             BsonArray array = x.asArray();
-            JSONArray result = new JSONArray();
+            java.util.List<Object> result = new java.util.ArrayList<Object>();
             for (int i = 0; i < array.size(); i++) {
-                result.put(FromValue(array.get(i)));
+                result.add(FromValue(array.get(i)));
             }
             return result;
         }
         if (x instanceof BsonDocument) {
             BsonDocument doc = x.asDocument();
-            JSONObject result = new JSONObject();
+            java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
             Object[] keys = doc.keySet().toArray();
             for (int i = 0; i < keys.length; i++) {
                 result.put((String) keys[i], FromValue(doc.get((String) keys[i])));
