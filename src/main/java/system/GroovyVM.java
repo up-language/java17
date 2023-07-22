@@ -74,96 +74,42 @@ public class GroovyVM {
 
     public void echo(Object x, String title) {
         VMCommon.echo(x, title);
-        /*
-        if (title != null) System.out.printf("%s: ", title);
-        String result = "";
-        if (x == null) result = "null";
-        else result = x.toString();
-        if (x != null) {
-            if (x instanceof DynamicObject)
-                result = "<Dynamic:" + ((DynamicObject)x).value().getClass().getName() + "> " + result;
-            else
-                result = "<" + x.getClass().getName() + "> " + result;
-        }
-        System.out.println(result);
-        */
     }
 
     public void echo(Object x) {
         VMCommon.echo(x);
-        //echo(x, null);
     }
 
     public void echoJson(Object x, String title) {
         VMCommon.echoJson(x, title);
-        /*
-        if (title != null) System.out.printf("%s: ", title);
-        String result = toJson(x);
-        if (x != null) {
-            if (x instanceof DynamicObject)
-                result = "<Dynamic:" + ((DynamicObject)x).value().getClass().getName() + "> " + result;
-            else
-                result = "<" + x.getClass().getName() + "> " + result;
-        }
-        System.out.println(result);
-        */
     }
 
     public void echoJson(Object x) {
         VMCommon.echoJson(x);
-        //echoJson(x, null);
     }
 
     public String toJson(Object x) {
         return VMCommon.toJson(x);
-        //return BsonData.ToJson(BsonData.ToValue(x), true);
     }
 
     public Object fromJson(String json) {
         return VMCommon.fromJson(json);
-        //return DynamicObject.fromBsonValue(BsonData.FromJson(json));
     }
 
     public java.util.List<Object> newList(Object... args) {
         return VMCommon.newList(args);
-        /*
-        java.util.List<Object> result = new java.util.ArrayList<Object>();
-        for (int i = 0; i < args.length; i++) {
-            result.add(args[i]);
-        }
-        return result;
-        */
     }
 
     public java.util.Map<String, Object> newMap(Object... args) {
         return VMCommon.newMap(args);
-        /*
-        java.util.Map<String, Object> result = new java.util.LinkedHashMap<String, Object>();
-        for (int i = 0; i < args.length; i += 2) {
-            result.put((String) args[i], args[i + 1]);
-        }
-        return result;
-        */
     }
 
     public String readAsText(String path) throws Exception {
         return VMCommon.readAsText(path);
-        /*
-        if (path.startsWith(":/")) {
-            return ResourceUtil.GetString(path.substring(2));
-        } else if (path.startsWith("http:") || path.startsWith("https:")) {
-            try (InputStream in = new URL(path).openStream()) {
-                return IOUtils.toString(in);
-            }
-        } else {
-            return FileUtils.readFileToString(new File(path));
-        }
-        */
     }
 
     public Object readAsJson(String path) throws Exception {
         return VMCommon.readAsJson(path);
-        //return fromJson(readAsText(path));
     }
 
     public Object load(String path) throws Exception {
