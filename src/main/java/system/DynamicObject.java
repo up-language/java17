@@ -1,9 +1,9 @@
 package system;
 
-public class VMObject {
+public class DynamicObject {
     protected Object value = null;
 
-    protected VMObject(Object x) {
+    protected DynamicObject(Object x) {
         this.value = x;
     }
 
@@ -16,20 +16,20 @@ public class VMObject {
     protected static Object strip(Object x) {
         if (x == null) {
             return null;
-        } else if (!(x instanceof VMObject)) {
+        } else if (!(x instanceof DynamicObject)) {
             return x;
         } else {
-            var vo = (VMObject) x;
+            var vo = (DynamicObject) x;
             return vo.value;
         }
     }
 
-    public static VMObject newList(Object... args) {
+    public static DynamicObject newList(Object... args) {
         java.util.List<Object> result = new java.util.ArrayList<Object>();
         for (int i = 0; i < args.length; i++) {
             result.add(strip(args[i]));
         }
-        return new VMObject(result);
+        return new DynamicObject(result);
     }
 
     public int size() {
@@ -37,11 +37,15 @@ public class VMObject {
         return list.size();
     }
 
-    public VMObject at(int index) {
+    public DynamicObject at(int index) {
         java.util.List<Object> list = (java.util.List<Object>) this.value;
         Object result = list.get(index);
         if (result == null) return null;
-        return new VMObject(result);
+        return new DynamicObject(result);
+    }
+
+    public DynamicObject at(DynamicObject index) {
+        return at(index.asInt());
     }
 
     public void add(Object x) {
@@ -49,15 +53,15 @@ public class VMObject {
         list.add(strip(x));
     }
 
-    public static VMObject newMap(Object... args) {
+    public static DynamicObject newMap(Object... args) {
         java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {
             result.put((String) strip(args[i]), strip(args[i + 1]));
         }
-        return new VMObject(result);
+        return new DynamicObject(result);
     }
 
-    public VMObject keys() {
+    public DynamicObject keys() {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         var keys = map.keySet().toArray();
         //String[] result = new String[keys.length];
@@ -69,10 +73,14 @@ public class VMObject {
         return result;
     }
 
-    public VMObject get(String key) {
+    public DynamicObject get(String key) {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         if (!map.containsKey(key)) return null;
-        return new VMObject(map.get(key));
+        return new DynamicObject(map.get(key));
+    }
+
+    public DynamicObject get(DynamicObject key) {
+        return get(key.asString());
     }
 
     public int asInt() {
