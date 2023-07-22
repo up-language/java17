@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Data {
+public class BsonData {
     public static byte[] EncodeToBytes(BsonDocument doc) {
         BasicOutputBuffer outputBuffer = new BasicOutputBuffer();
         BsonBinaryWriter writer1 = new BsonBinaryWriter(outputBuffer);
@@ -31,7 +31,6 @@ public class Data {
 
     public static BsonDocument DecodeFromBytes(byte[] bytes) {
         RawBsonDocument rawDoc = new RawBsonDocument(bytes);
-        // return rawDoc;
         return DecodeFromBytes_Helper(rawDoc).asDocument();
     }
 
@@ -73,7 +72,7 @@ public class Data {
     }
 
     public static BsonArray NewObject() {
-        return new BsonArray(); //FromJson("{}");
+        return new BsonArray();
     }
 
     public static void Print(Object val) {

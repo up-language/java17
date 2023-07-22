@@ -59,11 +59,11 @@ public class KotlinVM {
     }
 
     public String toJson(Object x) {
-        return Data.ToJson(Data.ToValue(x), true);
+        return BsonData.ToJson(BsonData.ToValue(x), true);
     }
 
     public Object fromJson(String json) {
-        return Data.FromValue(Data.FromJson(json));
+        return BsonData.FromValue(BsonData.FromJson(json));
     }
 
     public java.util.List<Object> newArray(Object... args) {

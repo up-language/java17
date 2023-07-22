@@ -52,7 +52,13 @@ public class GroovyVM {
         for (int i = 0; i < args.length; i++) {
             this.setVariable("_" + i, args[i]);
         }
-        return this.shell.evaluate(script);
+        try {
+            return this.shell.evaluate(script);
+        } finally {
+            for (int i=0; i<args.length; i++) {
+                this.setVariable("_" + i, null);
+            }
+        }
     }
 
     public Object eval(String script, Object... args) {
@@ -99,11 +105,11 @@ public class GroovyVM {
     }
 
     public String toJson(Object x) {
-        return Data.ToJson(Data.ToValue(x), true);
+        return BsonData.ToJson(BsonData.ToValue(x), true);
     }
 
     public Object fromJson(String json) {
-        return Data.FromValue(Data.FromJson(json));
+        return BsonData.FromValue(BsonData.FromJson(json));
     }
 
     public java.util.List<Object> newList(Object... args) {
