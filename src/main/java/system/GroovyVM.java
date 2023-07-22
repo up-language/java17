@@ -55,7 +55,7 @@ public class GroovyVM {
         try {
             return this.shell.evaluate(script);
         } finally {
-            for (int i=0; i<args.length; i++) {
+            for (int i = 0; i < args.length; i++) {
                 this.setVariable("_" + i, null);
             }
         }
@@ -78,12 +78,13 @@ public class GroovyVM {
         if (title != null) System.out.printf("%s: ", title);
         String result = "";
         if (x == null) result = "null";
-        ////else if (x instanceof JSONArray) result = ((JSONArray) x).toString(2);
-        ////else if (x instanceof JSONObject) result = ((JSONObject) x).toString(2);
         else result = x.toString();
-        if (x != null)
-            //result = "<" + x.getClass().getSimpleName() + "> " + result;
-            result = "<" + x.getClass().getName() + "> " + result;
+        if (x != null) {
+            if (x instanceof DynamicObject)
+                result = "<Dynamic:" + ((DynamicObject)x).value().getClass().getName() + "> " + result;
+            else
+                result = "<" + x.getClass().getName() + "> " + result;
+        }
         System.out.println(result);
     }
 
@@ -93,11 +94,14 @@ public class GroovyVM {
 
     public void echoJson(Object x, String title) {
         if (title != null) System.out.printf("%s: ", title);
-        String json = toJson(x);
-        if (x != null)
-            //json = "<" + x.getClass().getSimpleName() + "> " + json;
-            json = "<" + x.getClass().getName() + "> " + json;
-        System.out.println(json);
+        String result = toJson(x);
+        if (x != null) {
+            if (x instanceof DynamicObject)
+                result = "<Dynamic:" + ((DynamicObject)x).value().getClass().getName() + "> " + result;
+            else
+                result = "<" + x.getClass().getName() + "> " + result;
+        }
+        System.out.println(result);
     }
 
     public void echoJson(Object x) {
@@ -106,7 +110,7 @@ public class GroovyVM {
 
     public String toJson(Object x) {
         if (x instanceof DynamicObject)
-            return BsonData.ToJson(((DynamicObject)x).toBsonValue(), true);
+            return BsonData.ToJson(((DynamicObject) x).toBsonValue(), true);
         else
             return BsonData.ToJson(BsonData.ToValue(x), true);
     }
@@ -134,11 +138,11 @@ public class GroovyVM {
     }
     */
 
-    public DynamicObject newList(Object...args) {
+    public DynamicObject newList(Object... args) {
         return DynamicObject.newList(args);
     }
 
-    public DynamicObject newMap(Object...args) {
+    public DynamicObject newMap(Object... args) {
         return DynamicObject.newMap(args);
     }
 
