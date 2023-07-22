@@ -105,7 +105,10 @@ public class GroovyVM {
     }
 
     public String toJson(Object x) {
-        return BsonData.ToJson(BsonData.ToValue(x), true);
+        if (x instanceof DynamicObject)
+            return BsonData.ToJson(((DynamicObject)x).toBsonValue(), true);
+        else
+            return BsonData.ToJson(BsonData.ToValue(x), true);
     }
 
     public Object fromJson(String json) {

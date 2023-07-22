@@ -27,6 +27,8 @@ class DynamicObjectTest {
             vm.echo(keys.at(i));
             vm.echo(map.get(keys.at(i)));
         }
+        vm.echoJson(list);
+        vm.echoJson(map);
     }
 
 }

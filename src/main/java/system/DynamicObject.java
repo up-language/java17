@@ -1,5 +1,10 @@
 package system;
 
+import org.bson.BsonArray;
+import org.bson.BsonDocument;
+import org.bson.BsonNull;
+import org.bson.BsonValue;
+
 public class DynamicObject {
     protected Object value = null;
 
@@ -102,4 +107,34 @@ public class DynamicObject {
         return this.value.toString();
     }
 
+    public BsonValue toBsonValue() {
+        return toBsonValue(this);
+    }
+
+    public static BsonValue toBsonValue(DynamicObject x) {
+        if (x instanceof java.util.List<?>) {
+            var list = (java.util.List<Object>) x;
+            var result = new BsonArray();
+            for (int i=0; i<list.size(); i++) {
+                if (list.get(i) == null)
+                    result.add(new BsonNull());
+                else
+                    result.add(toBsonValue(new DynamicObject(list.get(i))));
+            }
+            return result;
+        }
+        if (x instanceof java.util.Map<?, ?>) {
+            var map = (java.util.Map<String, Object>) x;
+            var result = new BsonDocument();
+            var keys = map.keySet().toArray();
+            for (int i=0; i<keys.length; i++) {
+                if (map.get(keys[i]) == null)
+                    result.put((String)keys[i], new BsonNull());
+                else
+                    result.put((String)keys[i], toBsonValue(new DynamicObject(map.get(keys[i]))));
+            }
+            return result;
+        }
+        return BsonData.ToValue(x.value);
+    }
 }
