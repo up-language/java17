@@ -8,7 +8,7 @@ public class KotlinVM {
     public KotlinVM() {
         ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByExtension("main.kts");
-        System.out.println(engine);
+        //System.out.println(engine);
         engine.put("vm", this);
     }
     public void setVariable(String name, Object x) {

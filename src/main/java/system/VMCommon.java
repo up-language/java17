@@ -68,8 +68,6 @@ public class VMCommon {
     }
 
     public static String readAsText(String path) throws Exception {
-        return VMCommon.readAsText(path);
-        /*
         if (path.startsWith(":/")) {
             return ResourceUtil.GetString(path.substring(2));
         } else if (path.startsWith("http:") || path.startsWith("https:")) {
@@ -79,7 +77,6 @@ public class VMCommon {
         } else {
             return FileUtils.readFileToString(new File(path));
         }
-        */
     }
 
     public static Object readAsJson(String path) throws Exception {
