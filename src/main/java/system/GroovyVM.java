@@ -4,8 +4,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-////import org.json.JSONArray;
-////import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
@@ -75,6 +73,8 @@ public class GroovyVM {
     }
 
     public void echo(Object x, String title) {
+        VMCommon.echo(x, title);
+        /*
         if (title != null) System.out.printf("%s: ", title);
         String result = "";
         if (x == null) result = "null";
@@ -86,13 +86,17 @@ public class GroovyVM {
                 result = "<" + x.getClass().getName() + "> " + result;
         }
         System.out.println(result);
+        */
     }
 
     public void echo(Object x) {
-        echo(x, null);
+        VMCommon.echo(x);
+        //echo(x, null);
     }
 
     public void echoJson(Object x, String title) {
+        VMCommon.echoJson(x, title);
+        /*
         if (title != null) System.out.printf("%s: ", title);
         String result = toJson(x);
         if (x != null) {
@@ -102,52 +106,45 @@ public class GroovyVM {
                 result = "<" + x.getClass().getName() + "> " + result;
         }
         System.out.println(result);
+        */
     }
 
     public void echoJson(Object x) {
-        echoJson(x, null);
+        VMCommon.echoJson(x);
+        //echoJson(x, null);
     }
 
     public String toJson(Object x) {
-        /*
-        if (x instanceof DynamicObject)
-            return BsonData.ToJson(((DynamicObject) x).toBsonValue(), true);
-        else
-            return BsonData.ToJson(BsonData.ToValue(x), true);
-        */
-        return BsonData.ToJson(BsonData.ToValue(x), true);
+        return VMCommon.toJson(x);
+        //return BsonData.ToJson(BsonData.ToValue(x), true);
     }
 
     public Object fromJson(String json) {
-        //return BsonData.FromValue(BsonData.FromJson(json));
-        return DynamicObject.fromBsonValue(BsonData.FromJson(json));
+        return VMCommon.fromJson(json);
+        //return DynamicObject.fromBsonValue(BsonData.FromJson(json));
     }
 
     public java.util.List<Object> newList(Object... args) {
+        return VMCommon.newList(args);
+        /*
         java.util.List<Object> result = new java.util.ArrayList<Object>();
         for (int i = 0; i < args.length; i++) {
             result.add(args[i]);
         }
         return result;
+        */
     }
 
     public java.util.Map<String, Object> newMap(Object... args) {
+        return VMCommon.newMap(args);
+        /*
         java.util.Map<String, Object> result = new java.util.LinkedHashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {
             result.put((String) args[i], args[i + 1]);
         }
         return result;
+        */
     }
-
-    /*
-    public DynamicObject newList(Object... args) {
-        return DynamicObject.newList(args);
-    }
-
-    public DynamicObject newMap(Object... args) {
-        return DynamicObject.newMap(args);
-    }
-    */
 
     public String readAsText(String path) throws Exception {
         if (path.startsWith(":/")) {
