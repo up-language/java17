@@ -2,6 +2,8 @@ package system;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 class DynamicObjectTest {
 
     @Test
@@ -33,6 +35,10 @@ class DynamicObjectTest {
         vm.echo(vm.fromJson(listJson));
         var mapJson = vm.toJson(map);
         vm.echo(vm.fromJson(mapJson));
+        //var dec = new BigDecimal(3.14);
+        var dec = vm.eval("3.14");
+        var decJson = vm.toJson(dec);
+        vm.echo(vm.fromJson(decJson));
     }
 
 }
