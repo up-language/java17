@@ -5,10 +5,10 @@ import org.bson.BsonDocument;
 import org.bson.BsonNull;
 import org.bson.BsonValue;
 
-public class DynamicObject {
+public class Dynamic {
     protected Object value = null;
 
-    protected DynamicObject(Object x) {
+    protected Dynamic(Object x) {
         this.value = x;
     }
 
@@ -28,20 +28,20 @@ public class DynamicObject {
     protected static Object strip(Object x) {
         if (x == null) {
             return null;
-        } else if (!(x instanceof DynamicObject)) {
+        } else if (!(x instanceof Dynamic)) {
             return x;
         } else {
-            var vo = (DynamicObject) x;
+            var vo = (Dynamic) x;
             return vo.value;
         }
     }
 
-    public static DynamicObject newList(Object[] args) {
+    public static Dynamic newList(Object[] args) {
         java.util.List<Object> result = new java.util.ArrayList<Object>();
         for (int i = 0; i < args.length; i++) {
             result.add(strip(args[i]));
         }
-        return new DynamicObject(result);
+        return new Dynamic(result);
     }
 
     public int size() {
@@ -49,14 +49,14 @@ public class DynamicObject {
         return list.size();
     }
 
-    public DynamicObject getAt(int index) {
+    public Dynamic getAt(int index) {
         java.util.List<Object> list = (java.util.List<Object>) this.value;
         Object result = list.get(index);
         if (result == null) return null;
-        return new DynamicObject(result);
+        return new Dynamic(result);
     }
 
-    public DynamicObject getAt(DynamicObject index) {
+    public Dynamic getAt(Dynamic index) {
         return getAt(index.asInt());
     }
 
@@ -70,19 +70,19 @@ public class DynamicObject {
         list.set(index, strip(x));
     }
 
-    public void putAt(DynamicObject index, Object x) {
+    public void putAt(Dynamic index, Object x) {
         putAt(index.asInt(), x);
     }
 
-    public static DynamicObject newMap(Object[] args) {
+    public static Dynamic newMap(Object[] args) {
         java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
         for (int i = 0; i < args.length; i += 2) {
             result.put((String) strip(args[i]), strip(args[i + 1]));
         }
-        return new DynamicObject(result);
+        return new Dynamic(result);
     }
 
-    public DynamicObject keys() {
+    public Dynamic keys() {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         var keys = map.keySet().toArray();
         var result = newList(new Object[] {});
@@ -92,15 +92,15 @@ public class DynamicObject {
         return result;
     }
 
-    public DynamicObject get(String key) {
+    public Dynamic get(String key) {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         if (!map.containsKey(key)) return null;
         var result = map.get(key);
         if (result == null) return null;
-        return new DynamicObject(result);
+        return new Dynamic(result);
     }
 
-    public DynamicObject get(DynamicObject key) {
+    public Dynamic get(Dynamic key) {
         return get(key.asString());
     }
 
@@ -109,7 +109,7 @@ public class DynamicObject {
         map.put(key, strip(x));
     }
 
-    public void put(DynamicObject key, Object x) {
+    public void put(Dynamic key, Object x) {
         put(key.asString(), x);
     }
 
@@ -138,7 +138,7 @@ public class DynamicObject {
     }
     */
 
-    public static BsonValue toBsonValue(DynamicObject x) {
+    public static BsonValue toBsonValue(Dynamic x) {
         if (x instanceof java.util.List<?>) {
             var list = (java.util.List<Object>) x;
             var result = new BsonArray();
@@ -146,7 +146,7 @@ public class DynamicObject {
                 if (list.get(i) == null)
                     result.add(new BsonNull());
                 else
-                    result.add(toBsonValue(new DynamicObject(list.get(i))));
+                    result.add(toBsonValue(new Dynamic(list.get(i))));
             }
             return result;
         }
@@ -158,14 +158,14 @@ public class DynamicObject {
                 if (map.get(keys[i]) == null)
                     result.put((String)keys[i], new BsonNull());
                 else
-                    result.put((String)keys[i], toBsonValue(new DynamicObject(map.get(keys[i]))));
+                    result.put((String)keys[i], toBsonValue(new Dynamic(map.get(keys[i]))));
             }
             return result;
         }
         return BsonData.ToValue(x.value);
     }
 
-    public static DynamicObject fromBsonValue(BsonValue x) {
+    public static Dynamic fromBsonValue(BsonValue x) {
         if (x instanceof BsonArray) {
             var array = (BsonArray)x;
             var result = newList(new Object[] {});
@@ -185,16 +185,16 @@ public class DynamicObject {
         }
         var val = BsonData.FromValue(x);
         if (val == null) return null;
-        return new DynamicObject(val);
+        return new Dynamic(val);
     }
 
-    public static DynamicObject fromObject(Object x) {
+    public static Dynamic fromStatic(Object x) {
         if (x == null) return null;
-        if (x instanceof DynamicObject) return (DynamicObject) x;
-        return new DynamicObject(x);
+        if (x instanceof Dynamic) return (Dynamic) x;
+        return new Dynamic(x);
     }
 
-    public static Object toObjexxt(DynamicObject x) {
+    public static Object toStatic(Dynamic x) {
         return x.value;
     }
 

@@ -14,7 +14,7 @@ public class VMCommon {
     }
 
     public static Object fromJson(String json) {
-        return DynamicObject.fromBsonValue(BsonData.FromJson(json));
+        return Dynamic.fromBsonValue(BsonData.FromJson(json));
     }
 
     public static void echo(Object x, String title) {
@@ -23,8 +23,8 @@ public class VMCommon {
         if (x == null) result = "null";
         else result = x.toString();
         if (x != null) {
-            if (x instanceof DynamicObject)
-                result = "<Dynamic:" + ((DynamicObject)x).value().getClass().getName() + "> " + result;
+            if (x instanceof Dynamic)
+                result = "<Dynamic:" + ((Dynamic)x).value().getClass().getName() + "> " + result;
             else
                 result = "<" + x.getClass().getName() + "> " + result;
         }
@@ -39,8 +39,8 @@ public class VMCommon {
         if (title != null) System.out.printf("%s: ", title);
         String result = toJson(x);
         if (x != null) {
-            if (x instanceof DynamicObject)
-                result = "<Dynamic:" + ((DynamicObject)x).value().getClass().getName() + "> " + result;
+            if (x instanceof Dynamic)
+                result = "<Dynamic:" + ((Dynamic)x).value().getClass().getName() + "> " + result;
             else
                 result = "<" + x.getClass().getName() + "> " + result;
         }

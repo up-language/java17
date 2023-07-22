@@ -2,14 +2,12 @@ package system;
 
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
-class DynamicObjectTest {
+class DynamicTest {
 
     @Test
     void test() throws Exception {
         var vm = new GroovyVM();
-        var list = DynamicObject.newList(new Object[] {11, "abc", null, 12L});
+        var list = Dynamic.newList(new Object[] {11, "abc", null, 12L});
         vm.echo(list);
         vm.echo(list.getAt(0));
         vm.echo(list.getAt(0).asInt());
@@ -21,7 +19,7 @@ class DynamicObjectTest {
         for (int i=0; i<list.size(); i++) {
             vm.echo(list.getAt(i), "" + i);
         }
-        var map = DynamicObject.newMap(new Object[] {list.getAt(1), "aaa", "xyz", 12.3});
+        var map = Dynamic.newMap(new Object[] {list.getAt(1), "aaa", "xyz", 12.3});
         vm.echo(map);
         var keys = map.keys();
         vm.echo(keys);

@@ -74,9 +74,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.scala-lang/scala-library
     api 'org.scala-lang:scala-library:2.13.11'
     // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-main-kts
-    api 'org.jetbrains.kotlin:kotlin-main-kts:1.9.0'
+    ////api 'org.jetbrains.kotlin:kotlin-main-kts:1.9.0'
     // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-scripting-jsr223
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-scripting-jsr223:1.9.0'
+    ////runtimeOnly 'org.jetbrains.kotlin:kotlin-scripting-jsr223:1.9.0'
 }
 
 test {
