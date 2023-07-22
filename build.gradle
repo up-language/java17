@@ -90,3 +90,7 @@ test {
     exceptionFormat 'full'
   }
 }
+
+jar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
