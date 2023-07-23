@@ -21,9 +21,11 @@ public class Dynamic {
         return this.value.getClass().getName();
     }
 
+    /*
     public Object value() {
         return this.value;
     }
+    */
 
     public static Dynamic wrap(Object x) {
         if (x == null) return null;

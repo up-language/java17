@@ -24,7 +24,7 @@ public class VMCommon {
         else result = x.toString();
         if (x != null) {
             if (x instanceof Dynamic)
-                result = "<Dynamic:" + ((Dynamic)x).value().getClass().getName() + "> " + result;
+                result = "<Dynamic:" + Dynamic.strip(x).getClass().getName() + "> " + result;
             else
                 result = "<" + x.getClass().getName() + "> " + result;
         }
@@ -40,7 +40,7 @@ public class VMCommon {
         String result = toJson(x);
         if (x != null) {
             if (x instanceof Dynamic)
-                result = "<Dynamic:" + ((Dynamic)x).value().getClass().getName() + "> " + result;
+                result = "<Dynamic:" + Dynamic.strip(x).getClass().getName() + "> " + result;
             else
                 result = "<" + x.getClass().getName() + "> " + result;
         }
