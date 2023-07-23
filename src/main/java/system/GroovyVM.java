@@ -2,12 +2,8 @@ package system;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 
 public class GroovyVM {
 
@@ -129,6 +125,14 @@ public class GroovyVM {
         }
         eval(readAsText(path));
         this.imported.put(path, 1L);
+    }
+
+    public void writeStringToFile(String path, String data) throws Exception {
+        VMCommon.writeStringToFile(path, data);
+    }
+
+    public String readStringFromFile(String path, String fallback) throws Exception {
+        return VMCommon.readStringFromFile(path, fallback);
     }
 
 }

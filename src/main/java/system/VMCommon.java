@@ -81,7 +81,14 @@ public class VMCommon {
 
     public static Object readAsJson(String path) throws Exception {
         return VMCommon.readAsJson(path);
-        //return fromJson(readAsText(path));
+    }
+
+    public static void writeStringToFile(String path, String data) throws Exception {
+        MiscUtil.WriteStringToFile(path, data);
+    }
+
+    public static String readStringFromFile(String path, String fallback) throws Exception {
+        return MiscUtil.ReadStringFromFile(path, fallback);
     }
 
 }
