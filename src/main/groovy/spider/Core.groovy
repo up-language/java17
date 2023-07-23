@@ -5,33 +5,36 @@ import system.GroovyVM
 
 class Core {
     def vm = null
-    def info = null
+    def settings = null
     Core(GroovyVM vm) {
         this.vm = vm
-        this.info = loadSettings("spider-explorer")
+        this.settings = loadSettings("spider-explorer")
     }
     def info() {
-        if (this.info.info.count == null) this.info.info.count = 0
-        this.info.info.count++
-        return info
+        if (this.settings.info.count == null) this.settings.info.count = 0
+        this.settings.info.count++
+        return settings.info
+    }
+    def save() {
+        this.saveSettings(this.settings)
     }
     def stripTest(inf) {
         inf = Dynamic.strip(inf)
         vm.echo(inf)
     }
-    def loadSettings(product) {
-        def info = [:]
-        String userHomeDir = System.getProperty("user.home")
-        info.userHomeDir = userHomeDir
+    protected def loadSettings(product) {
+        def settings = [:]
+        this.settings = settings
+        def userHomeDir = System.getProperty("user.home")
+        settings.userHomeDir = userHomeDir
         println "The User Home Directory is $userHomeDir"
         String settingsPath = userHomeDir + "/$product/settings.json";
-        info.path = settingsPath
-        String json = vm.readStringFromFile(settingsPath, '{}')
-        def obj = vm.fromJson(json)
-        info.info = obj
-        return info
+        settings.path = settingsPath
+        def obj = vm.fromJson(vm.readStringFromFile(settingsPath, "{}"))
+        settings.info = obj
+        return settings
     }
-    def saveSettings(settings) {
+    protected def saveSettings(settings) {
         def path = settings.path
         vm.writeStringToFile(path, vm.toJson(settings.info))
     }
