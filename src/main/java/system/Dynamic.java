@@ -39,8 +39,8 @@ public class Dynamic {
         } else if (!(x instanceof Dynamic)) {
             return x;
         } else {
-            var vo = (Dynamic) x;
-            return vo.value;
+            //var vo = (Dynamic) x;
+            return ((Dynamic) x).value;
         }
     }
 
