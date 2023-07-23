@@ -11,16 +11,10 @@ class Core {
         this.settings = loadSettings("spider-explorer")
     }
     def info() {
-        //if (this.settings.info.count == null) this.settings.info.count = 0
-        //this.settings.info.count++
         return settings.info
     }
     def save() {
         this.saveSettings(this.settings)
-    }
-    def stripTest(inf) {
-        inf = Dynamic.strip(inf)
-        vm.echo(inf)
     }
     protected def loadSettings(product) {
         def settings = [:]
