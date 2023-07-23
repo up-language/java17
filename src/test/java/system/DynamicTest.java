@@ -25,7 +25,7 @@ class DynamicTest {
         vm.echo(keys);
         for (int i=0; i<keys.size(); i++) {
             vm.echo(keys.getAt(i));
-            vm.echo(map.get(keys.getAt(i)));
+            vm.echo(map.get(keys.getAt(i).asString()));
         }
     }
 

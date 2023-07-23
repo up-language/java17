@@ -57,16 +57,25 @@ public class Dynamic {
         return list.size();
     }
 
-    public Dynamic getAt(int index) {
+    public Dynamic getAt(int index, Object fallback) {
         java.util.List<Object> list = (java.util.List<Object>) this.value;
         Object result = list.get(index);
-        if (result == null) return null;
+        if (result == null) {
+            list.set(index, strip(fallback));
+            return wrap(fallback);
+        }
         return new Dynamic(result);
     }
 
+    public Dynamic getAt(int index) {
+        return getAt(index, null);
+    }
+
+    /*
     public Dynamic getAt(Dynamic index) {
         return getAt(index.asInt());
     }
+    */
 
     public void add(Object x) {
         java.util.List<Object> list = (java.util.List<Object>) this.value;
@@ -78,9 +87,11 @@ public class Dynamic {
         list.set(index, strip(x));
     }
 
+    /*
     public void putAt(Dynamic index, Object x) {
         putAt(index.asInt(), x);
     }
+    */
 
     public static Dynamic newMap(Object[] args) {
         java.util.Map<String, Object> result = new java.util.HashMap<String, Object>();
@@ -102,7 +113,10 @@ public class Dynamic {
 
     public Dynamic get(String key, Object fallback) {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
-        if (!map.containsKey(key)) return wrap(fallback);
+        if (!map.containsKey(key)) {
+            map.put(key, strip(fallback));
+            return wrap(fallback);
+        }
         var result = map.get(key);
         if (result == null) return null;
         return new Dynamic(result);
@@ -112,18 +126,22 @@ public class Dynamic {
         return get(key, null);
     }
 
+    /*
     public Dynamic get(Dynamic key) {
         return get(key.asString());
     }
+    */
 
     public void put(String key, Object x) {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
         map.put(key, strip(x));
     }
 
+    /*
     public void put(Dynamic key, Object x) {
         put(key.asString(), x);
     }
+    */
 
     public int asInt() {
         if (this.value instanceof Integer) return (int) this.value;
