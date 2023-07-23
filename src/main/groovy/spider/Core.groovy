@@ -11,8 +11,8 @@ class Core {
         this.settings = loadSettings("spider-explorer")
     }
     def info() {
-        if (this.settings.info.count == null) this.settings.info.count = 0
-        this.settings.info.count++
+        //if (this.settings.info.count == null) this.settings.info.count = 0
+        //this.settings.info.count++
         return settings.info
     }
     def save() {
@@ -28,7 +28,7 @@ class Core {
         def userHomeDir = System.getProperty("user.home")
         settings.userHomeDir = userHomeDir
         println "The User Home Directory is $userHomeDir"
-        String settingsPath = userHomeDir + "/$product/settings.json";
+        String settingsPath = userHomeDir + "/.apps/$product/settings.json";
         settings.path = settingsPath
         def obj = vm.fromJson(vm.readStringFromFile(settingsPath, "{}"))
         settings.info = obj

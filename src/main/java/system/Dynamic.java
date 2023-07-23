@@ -100,12 +100,16 @@ public class Dynamic {
         return result;
     }
 
-    public Dynamic get(String key) {
+    public Dynamic get(String key, Object fallback) {
         java.util.Map<String, Object> map = (java.util.Map<String, Object>) this.value;
-        if (!map.containsKey(key)) return null;
+        if (!map.containsKey(key)) return wrap(fallback);
         var result = map.get(key);
         if (result == null) return null;
         return new Dynamic(result);
+    }
+
+    public Dynamic get(String key) {
+        return get(key, null);
     }
 
     public Dynamic get(Dynamic key) {
